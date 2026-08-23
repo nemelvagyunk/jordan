@@ -7,6 +7,8 @@ import { getActiveCommunity, getActiveCommunityId } from '/imports/ui_3/lib/acti
 
 import './live-chat.html';
 
+const MOBILE_BREAKPOINT = 576; // px - egyezik a live-chat.less media query-vel
+
 Template.Live_Chat.helpers({
   liveAgenda() {
     const communityId = getActiveCommunityId();
@@ -35,7 +37,9 @@ export function joinLiveChat(user, doc) {
   const jitsiOptions = {
     roomName,
     parentNode: $('#live-chat')[0],
-    configOverwrite: {},
+    configOverwrite: {
+      disableDeepLinking: true, // telefonon ne az appboltba kuldje a lakot, maradjon a bongeszoben
+    },
     onload() {
       api.executeCommand('subject', houseName + ' - ' + agendaName);
       api.executeCommand('displayName', userName);
@@ -44,12 +48,21 @@ export function joinLiveChat(user, doc) {
   };
   Session.set('joinedVideo', true);
   const api = new JitsiMeetExternalAPI(domain, jitsiOptions);
+  // Telefonon (kis kepernyon) csatlakozaskor mindig teljes kepernyore valtunk
+  if (window.innerWidth <= MOBILE_BREAKPOINT) {
+    $('.live-chat-config').addClass('maximized');
+    $('.maximize-icon i').removeClass('fa-expand').addClass('fa-compress');
+  }
   return api;
 }
 
 Template.Live_Chat.events({
   'click .spin-icon'() {
     $('.live-chat-config-box').toggleClass('show');
+  },
+  'click .maximize-icon'() {
+    $('.live-chat-config').toggleClass('maximized');
+    $('.maximize-icon i').toggleClass('fa-expand fa-compress');
   },
   'click .join-video'() {
     const communityId = getActiveCommunityId();

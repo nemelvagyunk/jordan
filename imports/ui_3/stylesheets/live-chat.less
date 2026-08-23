@@ -36,6 +36,25 @@
     border-right: none;
 }
 
+.maximize-icon {
+    position: absolute;
+    left: 0;
+    top: 45px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    cursor: pointer;
+    color: white;
+    background: @red;
+    z-index: 2100;
+}
+
+#live-chat iframe {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 @media screen and (max-width: 576px) {
     #live-chat {
         width: 85vw;
@@ -45,5 +64,24 @@
   
     .live-chat-config-box {
         margin-right: -85vw;
+    }
+}
+
+/* Teljes kepernyos mod - a maximize-icon kapcsolja */
+.live-chat-config.maximized {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3000;
+
+    .live-chat-config-box {
+        margin-right: 0;
+        height: 100vh;
+    }
+
+    #live-chat {
+        width: ~"calc(100vw - 40px)";
+        height: 100vh;
     }
 }
