@@ -80,3 +80,7 @@ mobile-config.js
 build.sh
 .vscode
 package-lock.json
+
+
+# eles bundle - nagy fajl, nem valo a repoba (deploy/build_bundle.bat keszti)
+/deploy/bundle/

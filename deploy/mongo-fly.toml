@@ -1,0 +1,23 @@
+# Fly.io konfiguracio - MongoDB (kulon kis app, csak belso halozaton erheto el)
+app = "jordan-mongo"
+primary_region = "ams"
+
+[build]
+  image = "mongo:4.4"
+
+# FONTOS: a Fly belso halozata IPv6-os, a mongod viszont alapbol nem figyel IPv6-on.
+# Ezert kell a --ipv6 --bind_ip_all, kulonben az app nem erne el a jordan-mongo.internal cimen.
+[processes]
+  app = "mongod --ipv6 --bind_ip_all"
+
+[mounts]
+  source = "mongodata"
+  destination = "/data/db"
+
+# Szandekosan NINCS [http_service] szekcio: kivulrol nem erheto el,
+# csak a Fly belso halozatan (jordan-mongo.internal) az app szamara.
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

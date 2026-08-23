@@ -1,0 +1,27 @@
+# Fly.io konfiguracio - Jordan (LiDeHouse) alkalmazas
+# Ha a "jordan-hazkezelo" nev foglalt lenne, valassz masikat es ird at itt + a ROOT_URL-ben.
+app = "jordan-hazkezelo"
+primary_region = "ams"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "3000"
+  ROOT_URL = "https://jordan-hazkezelo.fly.dev"
+  HTTP_FORWARDED_COUNT = "1"
+  # Meteor beallitasok egy sorban (a settings-production.json tartalma).
+  # Ha valtoztatsz rajta, ezt a sort frissitsd, aztan: fly deploy
+  METEOR_SETTINGS = '{"public":{"enableDemo":true},"demoPassword":"jordan2026"}'
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  memory = "1gb"
+  cpu_kind = "shared"
+  cpus = 1
