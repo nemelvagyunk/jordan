@@ -16,7 +16,7 @@
     "@antoineschaller/kadira": "^1.0.1",
     "@babel/runtime": "^7.9.6",
     "autoprefixer": "^10.4.21",
-    "bcrypt": "^6.0.0",
+    "bcrypt": "5.0.1",
     "compress.js": "^1.1.2",
     "deep-extend": "^0.6.0",
     "faker": "^3.1.0",
