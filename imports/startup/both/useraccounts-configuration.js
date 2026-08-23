@@ -55,6 +55,11 @@ AccountsTemplates.configure({
   // https://stackoverflow.com/questions/12984637/is-there-a-post-createuser-hook-in-meteor-when-using-accounts-ui-package
 });
 
+// --- SMART Tarsashazkezeles: bejelentkezes felhasznalonevvel VAGY e-maillel (sajat modositas) ---
+AccountsTemplates.addFields([
+  { _id: 'username_and_email', type: 'text', displayName: 'usernameOrEmail', placeholder: 'felhasználónév vagy e-mail', required: true },
+]);
+
 // We retrieve the language from the options on the server, and use it to set the language of the new user object
 if (Meteor.isServer) {
   Accounts.onCreateUser((options, user) => {
