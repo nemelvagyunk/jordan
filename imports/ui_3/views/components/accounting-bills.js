@@ -1,0 +1,215 @@
+import { Meteor } from 'meteor/meteor';
+import { Template } from 'meteor/templating';
+import { AutoForm } from 'meteor/aldeed:autoform';
+import { _ } from 'meteor/underscore';
+import { TAPi18n } from 'meteor/tap:i18n';
+import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
+import { datatables_i18n } from 'meteor/ephemer:reactive-datatables';
+import { $ } from 'meteor/jquery';
+
+import { __ } from '/imports/localization/i18n.js';
+import { debugAssert } from '/imports/utils/assert.js';
+import { validDateOrUndefined } from '/imports/api/utils';
+import { ModalStack } from '/imports/ui_3/lib/modal-stack.js';
+import { Contracts } from '/imports/api/contracts/contracts.js';
+import { contractsFinancesColumns } from '/imports/api/contracts/tables.js';
+import '/imports/api/contracts/actions.js';
+import { getActiveCommunity } from '/imports/ui_3/lib/active-community.js';
+import { Partners } from '/imports/api/partners/partners.js';
+import '/imports/api/partners/actions.js';
+import { partnersFinancesColumns } from '/imports/api/partners/tables.js';
+import { Transactions } from '/imports/api/accounting/transactions.js';
+import '/imports/api/accounting/balances/balances.js';
+import '/imports/api/accounting/actions.js';
+import { Txdefs } from '/imports/api/accounting/txdefs/txdefs.js';
+import { billColumns, receiptColumns } from '/imports/api/accounting/bills/tables.js';
+import { paymentsColumns } from '/imports/api/accounting/payments/tables.js';
+import { ParcelBillings } from '/imports/api/accounting/parcel-billings/parcel-billings.js';
+import '/imports/api/accounting/parcel-billings/actions.js';
+import { actionHandlers } from '/imports/ui_3/views/blocks/action-buttons.js';
+import { DatatablesSelectAndExportButtons } from '/imports/ui_3/views/blocks/datatables.js';
+import '/imports/ui_3/views/components/print-action.js';
+import '/imports/ui_3/views/components/parcel-billings.js';
+import '/imports/ui_3/views/components/select-voters.js';
+import '/imports/ui_3/views/components/accounting-filter.js';
+import '/imports/ui_3/views/components/accounting-partner-ledger.js';
+import '/imports/ui_3/views/modals/confirmation.js';
+import '/imports/ui_3/views/components/lazy-tab.js';
+import '/imports/ui_3/views/modals/autoform-modal.js';
+import './accounting-bills.html';
+
+Template.Accounting_bills.viewmodel({
+  share: 'accountingFilter',
+  onCreated(instance) {
+    ModalStack.setVar('relation', this.activePartnerRelation(), true);
+    instance.autorun(() => {
+      //initializeDatatablesSelectButtons('Bills');
+      const communityId = this.communityId();
+      instance.subscribe('parcelBillings.inCommunity', { communityId });
+      instance.subscribe('balances.inCommunity', { communityId, partners: [], tag: 'T', notNull: true });
+      const params = this.transactionsSubscriptionParams();
+      if (params) {
+        instance.subscribe('transactions.inCommunity', params);
+      }
+    });
+  },
+  paymentsWoStatement() {
+    return this.community()?.settings?.paymentsWoStatement;
+  },
+  parcelBillings() {
+    return ParcelBillings.find({ communityId: this.communityId() });
+  },
+  collectionOf(activePartnerRelation) {
+    switch (activePartnerRelation) {
+      case 'supplier':
+      case 'customer': return 'bills';
+      case 'member': return 'parcelBillings';
+      default: debugAssert(false, 'No such bill relation'); return undefined;
+    }
+  },
+  findTxdefs(category) {
+    const txdefs = Txdefs.findTfetch({
+      communityId: this.communityId(),
+      category,
+      'data.relation': this.activePartnerRelation(),
+    });
+    return txdefs || {};
+  },
+  count(category, kind) {
+    const selector = { communityId: this.communityId(), category, relation: this.activePartnerRelation() };
+    if (kind === 'outstanding') {
+      if (!_.contains(this.community()?.settings.paymentsToBills, this.activePartnerRelation())) return 0;
+      selector.outstanding = { $ne: 0 };
+    } else if (kind === 'unposted') selector.status = 'draft';
+    else if (kind === 'unreconciled') selector.reconciled = false;
+    const txs = Transactions.find(selector);
+    return txs.count();
+  },
+  countOverduePartners(color) {
+    const contracts = Contracts.findActive(this.contractsFilterSelector()).fetch();
+    const overdues = contracts.filter(c => c.balance() !== 0 && c.mostOverdueDaysColor() === color);
+    return overdues.length;
+  },
+  txTableDataFn(category) {
+    const self = this;
+    return () => Transactions.find(self.filterSelector(category)).fetch();
+  },
+/*  transactionsSubscriptionFn() {
+    const self = this;
+    return (instance) => {
+      const params = self.transactionsSubscriptionParams();
+      if (params) {
+        instance.subscribe('transactions.inCommunity', params);
+      }
+    };
+  }, */
+  billsTableDataFn() {
+    const self = this;
+    return () => Transactions.find(self.filterSelector('bill')).fetch();
+  },
+  billsOptionsFn() {
+    const self = this;
+    return () => Object.create({
+      columns: billColumns(getActiveCommunity()),
+      tableClasses: 'display',
+      language: datatables_i18n[TAPi18n.getLanguage()],
+      lengthMenu: [[25, 100, 250, -1], [25, 100, 250, __('all')]],
+      pageLength: 25,
+      ...DatatablesSelectAndExportButtons(self.community(), Transactions, 'bills'),
+    });
+  },
+  paymentsTableDataFn() {
+    const self = this;
+    return () => Transactions.find(self.filterSelector('payment')).fetch();
+  },
+  paymentsOptionsFn() {
+    const self = this;
+    return () => Object.create({
+      columns: paymentsColumns(),
+      tableClasses: 'display',
+      language: datatables_i18n[TAPi18n.getLanguage()],
+      lengthMenu: [[25, 100, 250, -1], [25, 100, 250, __('all')]],
+      pageLength: 25,
+      ...DatatablesSelectAndExportButtons(self.community(), Transactions, 'payments'),
+    });
+  },
+  receiptsTableDataFn() {
+    const self = this;
+    return () => Transactions.find(self.filterSelector('receipt')).fetch();
+  },
+  receiptsOptionsFn() {
+    const self = this;
+    return () => Object.create({
+      columns: receiptColumns(),
+      tableClasses: 'display',
+      language: datatables_i18n[TAPi18n.getLanguage()],
+      lengthMenu: [[25, 100, 250, -1], [25, 100, 250, __('all')]],
+      pageLength: 25,
+      ...DatatablesSelectAndExportButtons(self.community(), Transactions, 'receipts'),
+    });
+  },
+  contractsFilterSelector() {
+    const selector = { communityId: this.communityId() };
+    selector.relation = this.activePartnerRelation();
+    return selector;
+  },
+/*   partnersSubscriptionFn() {
+    const self = this;
+    return (instance) => {
+      instance.subscribe('balances.inCommunity', { communityId: self.communityId(), partners: [], tags: ['T'] });
+    };
+  }, */
+  contractsTableDataFn() {
+    const self = this;
+    return () => {
+      let partners = Contracts.findActive(self.contractsFilterSelector()).fetch();
+      if (self.unreconciledOnly()) partners = partners.filter(p => p.balance());
+      return partners;
+    };
+  },
+  contractsOptionsFn() {
+    return () => Object.create({
+      columns: contractsFinancesColumns(),
+      tableClasses: 'display',
+      language: datatables_i18n[TAPi18n.getLanguage()],
+    });
+  },
+  periodTagFromBeginDate() {
+    const beginDate = validDateOrUndefined(this.beginDate());
+    const periodTag = `T-${beginDate.getFullYear()}`;
+    return periodTag;
+  },
+});
+
+Template.Accounting_bills.events({
+  'click .js-create'(event, instance) {
+    const entity = $(event.target).closest('[data-entity]').data('entity');
+    const defId = $(event.target).closest('[data-defid]').data('defid');
+    const txdef = Txdefs.findOne(defId);
+    Transactions.actions.create({ entity, txdef }).run(event, instance);
+  },
+  'click .js-apply'(event, instance) {
+    ParcelBillings.actions.apply().run();
+  },
+  'click .js-edit-defs'(event, instance) {
+    const modalContext = {
+      id: 'parcelbillings.view',
+      title: 'Parcel billings',
+      body: 'Parcel_billings',
+      size: 'lg',
+      bodyContext: {},
+    };
+    Modal.show('Modal', modalContext);
+  },
+  'click .js-partner-ledger'(event, instance) {
+    const communityId = instance.viewmodel.communityId();
+    if (!Meteor.user().hasPermission('transactions.inCommunity', { communityId })) return;
+    Modal.show('Modal', {
+      id: 'partnerledger.view',
+      title: __('Partner ledger'),
+      body: 'Accounting_partner_ledger',
+      bodyContext: {},
+      size: 'lg',
+    });
+  },
+});

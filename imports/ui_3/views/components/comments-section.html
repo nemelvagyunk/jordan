@@ -1,0 +1,90 @@
+<template name="Comments_section">
+    <div class="social-footer comment-section" data-id="{{_id}}">
+        {{#if undisplayedEvents}}
+        <div class="social-comment">
+            <a href="{{pathFor 'Topic show' _tid=_id}}" class="js-show-all">{{_ 'View previous comments' undisplayedEvents}}</a>
+        </div>
+        {{/if}}
+        {{#each event in eventsOfTopic}}
+            {{> Comment event}}
+            {{#if equals @index (subtract eventsOfTopic.length 1)}}{{Waypoint 'refreshAll'}}{{/if}}
+        {{/each}}
+      
+        <div class="social-comment">
+            <a href="" class="pull-left">
+                <img alt="avatar" class="message-avatar" src={{absoluteUrl currentUser.avatar}}>
+            </a>
+            <div class="media-body">
+                <textarea  class="form-control js-send-enter" {{b "value: commentText"}} placeholder="{{_ 'newCommentPlaceholder'}}"></textarea>
+                <div {{b "if: commentText"}} class="text-right">
+                    <span class="btn btn-xs btn-default m-t-xs js-attach"><i class="glyphicon glyphicon-paperclip"></i> {{_ 'Editor'}}</span>
+                    <span class="btn btn-xs btn-primary m-t-xs text-capitalize js-send">{{_ 'send'}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="Comment">
+    <div class="social-comment">         
+        <a href="{{pathFor 'User show' _id=this.creatorId}}" class="pull-left">
+            <img alt="avatar" class="message-avatar" src={{absoluteUrl this.creator.avatar}}>
+        </a>
+        <div class="media-body" >
+            <a href="{{pathFor 'User show' _id=this.creatorId}}">
+                {{this.creator.displayOfficialName}}
+            </a>
+            {{#if (includes this.entityName "statusChange")}}
+                {{#if this.status}}
+                    {{#let eventStatusObject = (this.topic.statusObject this.status)}}
+                    {{_ 'actions.statusChange.did'}}: <span class="label label-{{eventStatusObject.color}}">{{_ (concat 'schemaWorkflow.status.options.' this.status)}}</span><!--<strong>{{_ this.status}}</strong>--><br>
+                    {{/let}}
+                {{else}}
+                    {{_ 'actions.statusUpdate.did'}}<br>
+                {{/if}}                
+            {{/if}}
+                {{#if editing}}
+                <textarea class="form-control" data-id="{{_id}}" value={{text}}></textarea>
+                <div class="text-right">
+                    <span class="btn btn-xs btn-default m-t-xs js-edit">
+                        <i class="glyphicon glyphicon-paperclip"></i>  {{_ 'Editor'}}
+                    </span>
+                    <span class="btn btn-xs btn-default m-t-xs text-capitalize js-cancel">{{_ 'cancel'}}</span>
+                    <span class="btn btn-xs btn-primary m-t-xs text-capitalize js-save">{{_ 'save'}}</span>
+                </div>
+                {{#if (includes this.entityName "statusChange")}} {{> StatusChangeData this}} {{/if}}
+                {{> Attachments doc=this}}
+            {{else}}
+                {{#hideable}}
+                    <span class="text-dark newlines" data-id="{{_id}}" style="font-weight:{{this.likeStrength}}">{{>ChoppedHeight text=text height=200 markdown=true}}</span>
+                    {{#if (includes this.entityName "statusChange")}} {{> StatusChangeData this}} {{/if}}
+                    {{> Attachments doc=this}}
+                    <div>
+                        <a href="" class="small cap-first js-like" title={{this.likerNames}}>
+                            <i class="fa {{#if this.isLikedBy currentUser._id}} fa-exclamation-circle {{else}} fa-hand-o-up {{/if}}"></i>
+                            {{_ 'important'}}! ({{this.likesCount}})
+                        </a> -
+                        <small class="text-muted" title="{{displayTime createdAt}}">{{displayTimeFrom createdAt}}</small>
+                        {{>Action_buttons_group doc=this collection='comments' actions='inplaceEdit,move,delete,mute' size='sm'}}
+                    </div>
+                {{/hideable}}
+            {{/if}}
+        </div>
+    </div>
+</template>
+
+<template name="StatusChangeData">
+    {{#if entriesOf this.dataUpdate}}
+    <div class="well">
+        {{#each dataEntry in entriesOf this.dataUpdate}}
+        <span>
+        {{#let key=(concat 'Tickets.ticket.' dataEntry.[0])}}
+        {{displayKey key}}: {{{displayValue key dataEntry.[1]}}}
+        {{/let}}
+        </span><br>
+        {{/each}}
+    </div>
+    {{/if}}
+</template>
+
+

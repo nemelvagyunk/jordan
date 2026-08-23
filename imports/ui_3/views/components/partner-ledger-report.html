@@ -1,0 +1,64 @@
+<template name="Partner_ledger_report">
+    <div class="table-responsive">
+    <table id="partner-ledger" class="table table-bordered table-condensed ">
+        <thead>
+            <tr class="table-row">
+              <td><strong>{{_ 'partner'}}/{{_ 'contract'}} ({{tag}})</strong></td>
+              <td><strong>{{_ 'Opening balance'}}</strong></td>
+              <td><strong>{{_ 'schemaContracts.debit.label'}}</strong></td>
+              <td><strong>{{_ 'schemaContracts.credit.label'}}</strong></td>
+              <td><strong>{{_ 'schemaContracts.debitTotal.label'}}</strong></td>
+              <td><strong>{{_ 'schemaContracts.creditTotal.label'}}</strong></td>
+              <td><strong>{{_ 'Closing balance'}}</strong></td>
+              <td><strong>{{_ 'Unidentified'}}</strong></td>
+          </tr>
+      </thead>
+        <tbody>
+            {{#each contract in contracts}}
+            {{#if hasActivity contract tag}}
+            <tr class="table-row">
+                <td class="row-header nowrap" data-contract="{{contract._id}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{contract.displayFull}}
+                </td>
+                {{#let cellValue=(add (balance contract relationAccount tag 'total' 'O') (balance contract unidentifiedAccount tag 'total' 'O'))}}
+                <td class="cell nowrap {{negativeClass cellValue}}" data-contract="{{contract._id}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{displayNumber cellValue}}
+                </td>
+                {{/let}}
+                {{#let cellValue=(add (balance contract relationAccount tag 'debitSum' 'T') (balance contract unidentifiedExpenseAccount tag 'total' 'T'))}}
+                <td class="cell nowrap {{negativeClass cellValue}}" data-contract="{{contract._id}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{displayNumber cellValue}}
+                </td>
+                {{/let}}
+                {{#let cellValue=(add (balance contract relationAccount tag 'creditSum' 'T') (balance contract unidentifiedIncomeAccount tag 'reverseTotal' 'T'))}}
+                <td class="cell nowrap {{negativeClass cellValue}}" data-contract="{{contract._id}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{displayNumber cellValue}}
+                </td>
+                {{/let}}
+                {{#let cellValue=(balance contract '`' tag 'debitTotal' 'T')}}
+                <td class="cell nowrap {{negativeClass cellValue}}" data-contract="{{contract._id}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{displayNumber cellValue}}
+                </td>
+                {{/let}}
+                {{#let cellValue=(balance contract '`' tag 'creditTotal' 'T')}}
+                <td class="cell nowrap {{negativeClass cellValue}}" data-contract="{{contract._id}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{displayNumber cellValue}}
+                </td>
+                {{/let}}
+                {{#let cellValue=(add (balance contract relationAccount tag 'total' 'C') (balance contract unidentifiedAccount tag 'total' 'C'))}}
+                <td class="cell nowrap {{negativeClass cellValue}}" data-contract="{{contract._id}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{displayNumber cellValue}}
+                </td>
+                {{/let}}
+                {{#let cellValue=(balance contract unidentifiedAccount tag 'total' 'C')}}
+                <td class="cell nowrap {{negativeClass cellValue}}" data-contract="{{contract._id}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{displayNumber cellValue}}
+                </td>
+                {{/let}}
+            </tr>
+            {{/if}}
+            {{/each}}
+        </tbody>
+    </table>
+    </div>
+</template>

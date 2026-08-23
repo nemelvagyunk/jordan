@@ -1,0 +1,332 @@
+import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Factory } from 'meteor/dburles:factory';
+import faker from 'faker';
+import { _ } from 'meteor/underscore';
+
+import { __ } from '/imports/localization/i18n.js';
+import { Log } from '/imports/utils/log.js';
+import { debugAssert, productionAssert } from '/imports/utils/assert.js';
+import { AddressSchema, displayAddress } from '/imports/localization/localization.js';
+import { allowedOptions, imageUpload } from '/imports/utils/autoform.js';
+import { availableLanguages } from '/imports/startup/both/language.js';
+import { Timestamped } from '/imports/api/behaviours/timestamped.js';
+import { Relations } from '/imports/api/core/relations.js';
+
+export const Communities = new Mongo.Collection('communities');
+
+const defaultAvatar = '/images/defaulthouse.jpg';
+Communities.accountingMethods = ['cash', 'accrual'];
+Communities.statusValues = ['sandbox', 'live', 'official', 'closed'];
+Communities.availableModules = ['forum', 'voting', 'maintenance', 'finances', 'marketplace', 'documents'];
+Communities.ownershipSchemeValues = ['condominium', 'corporation', 'foundation', 'cooperative', 'condo-coop', 'basket-coop']; //  'meritocracy' coming soon
+
+Communities.specificTerms = {};
+Communities.ownershipSchemeValues.forEach(val => Communities.specificTerms[val] = {});
+['condominium', 'condo-coop'].forEach(val => {
+  Communities.specificTerms[val]['community'] = 'condo';
+  Communities.specificTerms[val]['community finances'] = 'condo finances';
+});
+['cooperative'].forEach(val => {
+  Communities.specificTerms[val]['owner'] = 'voting member';
+});
+
+const chooseTemplate = {
+  options() {
+    return Communities.find({ isTemplate: true }).map(function option(v) {
+      return { label: v.name, value: v._id };
+    });
+  },
+};
+
+Communities.baseSchema = new SimpleSchema([{
+  name: { type: String, max: 100 },
+  isTemplate: { type: Boolean, optional: true, autoform: { omit: true } },
+  description: { type: String, max: 5000, optional: true, autoform: { type: 'textarea', rows: 3 } },
+  avatar: { type: String, defaultValue: defaultAvatar, optional: true, autoform: imageUpload() },
+}, AddressSchema, {
+  lot: { type: String, max: 100, optional: true },
+  regNo: { type: String, max: 100, optional: true },
+  management: { type: String, optional: true, autoform: { type: 'textarea', rows: 3 } },
+  taxNo: { type: String, max: 50, optional: true },
+  status: { type: String, allowedValues: Communities.statusValues, defaultValue: 'live', autoform: { type: 'hidden' } },
+  // cached fields:
+  parcels: { type: Object, blackbox: true, defaultValue: {}, autoform: { omit: true } },
+  registeredUnits: { type: Number, decimal: true, defaultValue: 0, autoform: { omit: true } },
+  billsUsed: { type: [String], defaultValue: [], allowedValues: Relations.values, autoform: { omit: true } },
+}]);
+
+const requiredBy = function (moduleName) {
+  return function () {
+    const modules = this.field('settings.modules');
+    const isActive = modules?.value?.includes(moduleName);
+    if (isActive && !this.value) {
+      return 'required';
+    }
+  };
+};
+
+Communities.genericSettingsSchema = new SimpleSchema({
+  modules: { type: [String], optional: true, allowedValues: Communities.availableModules, autoform: { type: 'select-checkbox', defaultValue: _.without(Communities.availableModules, 'finances', 'marketplace') } },
+  joinable: { type: String, allowedValues: ['inviteOnly', 'withApproval', 'withLink'], defaultValue: 'withApproval', autoform: allowedOptions() },
+  language: { type: String, allowedValues: availableLanguages, autoform: { firstOption: false } },
+  ownershipScheme: { type: String, allowedValues: Communities.ownershipSchemeValues, autoform: { defaultValue: 'condominium' } },
+  totalUnits: { type: Number, optional: true }, // If it is a fixed value, it is provided here
+  parcelRefFormat: { type: String, optional: true },
+  topicAgeDays: { type: Number, defaultValue: 365 },
+  communalModeration: { type: Number, defaultValue: 0, autoform: { defaultValue() { return 0; } } },
+});
+
+Communities.financesSettingsSchema = new SimpleSchema({
+  templateId: { type: String, regEx: SimpleSchema.RegEx.Id, autoform: chooseTemplate, optional: true, custom: requiredBy('finances') },
+  accountingMethod: { type: String, allowedValues: Communities.accountingMethods, autoform: allowedOptions(), optional: true, custom: requiredBy('finances') },
+  paymentsToBills: { type: [String], allowedValues: Relations.values, defaultValue: Relations.mainValues, autoform: { type: 'select-checkbox-inline' } },
+  paymentsWoStatement: { type: Boolean, optional: true },
+  allowPostToGroupAccounts: { type: Boolean, optional: true },
+  allowUnbilledParcels: { type: Boolean, optional: true },
+  balancesUploaded: { type: Boolean, optional: true },
+  subjectToVat: { type: Boolean, optional: true },
+  sendBillEmail: { type: [String], optional: true, allowedValues: ['member', 'customer'], defaultValue: [], autoform: { type: 'select-checkbox-inline' } },
+  enableMeterEstimationDays: { type: Number, defaultValue: 30 },
+  latePaymentFees: { type: Boolean, optional: true },
+});
+
+Communities.marketplaceSettingsSchema = new SimpleSchema({
+  marketplaceCurrency: { type: String, optional: true, max: 10 }, // If not specified the local currency will be used
+  giftEconomy: { type: Boolean, optional: true },
+});
+
+Communities.settingsSchema = new SimpleSchema([
+  Communities.genericSettingsSchema,
+  Communities.financesSettingsSchema,
+  Communities.marketplaceSettingsSchema,
+]);
+
+Communities.schema = new SimpleSchema([
+  Communities.baseSchema,
+  { settings: { type: Communities.settingsSchema } },
+]);
+
+Communities.listingsFields = {
+  name: 1,
+  parcels: 1,
+  lot: 1,
+};
+AddressSchema._schemaKeys.forEach((key) => {
+  _.extend(Communities.listingsFields, { [key]: 1 });
+});
+
+Meteor.startup(function indexCommunities() {
+  if (Meteor.isServer) {
+    Communities._ensureIndex({ isTemplate: 1, name: 1 }, { sparse: true });
+    Communities._ensureIndex({ lot: 1 });
+  }
+});
+
+Communities.helpers({
+  officialName() {
+    return this.name;
+  },
+  specificTermFor(text) {
+    return Communities.specificTerms[this.settings.ownershipScheme][text] || text;
+  },
+  _(text) {
+    return __(this.specificTermFor(text));
+  },
+  displayType() {
+    return this.specificTermFor('community');
+  },
+  hasPhysicalLocations() {
+    const scheme = this.settings?.ownershipScheme;
+    if (scheme === 'condominium' || scheme === 'condo-coop') return true;
+    return false;
+  },
+  propertyCategory() {
+    if (this.hasPhysicalLocations()) return '@property';
+    return '%property';
+  },
+  propertyRootCode() {
+    return this.propertyCategory()[0];
+  },
+  hasVotingUnits() {
+    const scheme = this.settings?.ownershipScheme;
+    if (!scheme) return;
+    switch (scheme) {
+      case 'condominium':
+      case 'corporation':
+      case 'basket-coop':
+        return true;
+      case 'foundation':
+      case 'cooperative':
+      case 'condo-coop':
+        return false;
+      default:
+        debugAssert(false, `No such ownershipScheme: ${scheme}`);
+    }
+  },
+  usesBlankParcels() {
+    return !this.hasVotingUnits() && !this.hasPhysicalLocations();
+  },
+  nextAvailableSerial() {
+    const Parcels = Mongo.Collection.get('parcels');
+    const serials = _.pluck(Parcels.find({ communityId: this._id, category: this.propertyCategory() }).fetch(), 'serial');
+    const maxSerial = serials.length ? Math.max(...serials) : 0;
+    return maxSerial + 1;
+  },
+  totalUnits() {
+    return this.settings?.totalUnits || this.registeredUnits;
+  },
+  displayAddress() {
+    return displayAddress(this);
+  },
+  asPartner() {
+    const partner = _.clone(this);
+    const bankAccount = this.primaryBankAccount();
+    partner.name = this.officialName();
+    partner.contact = { address: this.displayAddress() };
+    partner.BAN = bankAccount && bankAccount.BAN;
+    return { partner /* no contract */ };
+  },
+  accounts() {
+    const Accounts = Mongo.Collection.get('accounts');
+    return Accounts.findT({ communityId: this._id, templateId: this.settings?.templateId }, { sort: { code: 1 } });
+  },
+  primaryBankAccount() {
+    const Accounts = Mongo.Collection.get('accounts');
+    const bankAccount = Accounts.findOneT({ communityId: this._id, templateId: this.settings?.templateId, category: 'bank', primary: true });
+    //    if (!bankAccount) throw new Meteor.Error('err_notExixts', 'no primary bankaccount configured');
+    return bankAccount;
+  },
+  primaryCashAccount() {
+    const Accounts = Mongo.Collection.get('accounts');
+    const cashAccount = Accounts.findOneT({ communityId: this._id, templateId: this.settings?.templateId, category: 'cash', primary: true });
+    //    if (!cashAccount) throw new Meteor.Error('err_notExixts', 'no primary cash account configured');
+    return cashAccount;
+  },
+  userWithRole(role) {
+    const Memberships = Mongo.Collection.get('memberships');
+    const membershipWithRole = Memberships.findOneActive({ communityId: this._id, userId: { $exists: true }, role });
+    if (!membershipWithRole) return undefined;
+    return membershipWithRole.user();
+  },
+  usersWithRoles(roles) {
+    const Memberships = Mongo.Collection.get('memberships');
+    const users = Memberships.findActive({ communityId: this._id, userId: { $exists: true }, role: { $in: roles } }).map(membership => membership.user());
+    return _.without(_.uniq(users, false, u => u._id), undefined);
+  },
+  admin() {
+    const user = this.userWithRole('admin');
+    if (!user && !this.isTemplate) Log.warning(`Community was found without an admin. id: ${this._id}`);
+    return user;
+  },
+  treasurer() {
+    return this.userWithRole('treasurer') || this.userWithRole('manager') || this.userWithRole('admin');
+  },
+  ticketHandlers() {
+    return this.usersWithRoles(['maintainer', 'manager', 'admin']);
+  },
+  techsupport() {
+    return this.admin(); // TODO: should be the person with do.techsupport permission
+  },
+  users() {
+    const Memberships = Mongo.Collection.get('memberships');
+    const users = Memberships.findActive({ communityId: this._id, userId: { $exists: true } }).map(m => m.user());
+    return _.uniq(users, false, u => u._id);
+  },
+  voterships() {
+    const Memberships = Mongo.Collection.get('memberships');
+    const voterships = Memberships.findActive({ communityId: this._id, approved: true, role: 'owner', userId: { $exists: true } })
+      .fetch().filter(ownership => ownership.isVoting());
+    return voterships;
+  },
+  voters() {
+    const voters = this.voterships().map(v => v.partner());
+    return _.uniq(voters, false, u => u._id);
+  },
+  joinable() {
+    return this.settings?.joinable !== 'inviteOnly';
+  },
+  needsJoinApproval() {
+    return this.settings?.joinable !== 'withLink';
+  },
+  hasLiveAssembly() {
+    const Agendas = Mongo.Collection.get('agendas');
+    return !!Agendas.findOne({ communityId: this._id, live: true });
+  },
+  isActiveModule(moduleName) {
+    return !this.settings?.modules || _.contains(this.settings.modules, moduleName);
+  },
+  lastActivity() { // TODO: needs subscription to last Transactions
+    let result = undefined;
+    ['topics', 'comments', 'transactions'].forEach(name => {
+      const collection = Mongo.Collection.get(name);
+      const lastDoc = collection.findOne({ comunityId: this.communityId }, { $sort: { createdAt: -1 } });
+      if (lastDoc && (!result || lastDoc.createdAt > result)) {
+        result = lastDoc.createdAt;
+      }
+    });
+    return result;
+  },
+  dataSize() {
+    let result = 0;
+    const Shareddocs = Mongo.Collection.get("shareddocs");
+    const shareddocs = Shareddocs.find({ communityId: this._id }).fetch();
+    shareddocs.forEach(doc => result += doc.size);
+    return result;
+  },
+  parcelCount() {
+    let result = 0;
+    Object.keys(this.parcels).forEach(k => result += this.parcels[k]);
+    return result;
+  },
+  parcelTypes() {
+    return Object.keys(this.parcels);
+  },
+  parcelGroups() {
+    const Parcels = Mongo.Collection.get("parcels");
+    const parcels = Parcels.find({ communityId: this._id }).fetch();
+    return _.without(_.uniq(_.pluck(parcels, 'group')), undefined);
+  },
+  meteredServices() {
+    const Meters = Mongo.Collection.get("meters");
+    const meters = Meters.find({ communityId: this._id }).fetch();
+    return _.without(_.uniq(_.pluck(meters, 'service')), undefined);
+  },
+  toString() {
+    return this.name;
+  },
+});
+
+Communities.attachSchema(Communities.schema);
+Communities.attachBehaviour(Timestamped);
+
+Communities.simpleSchema().i18n('schemaCommunities');
+
+if (Meteor.isServer) {
+  Communities.after.remove(function (userId, doc) {
+    // cascading clean was moved to the method
+  });
+}
+
+Factory.define('community', Communities, {
+  name: () => faker.random.word() + 'house',
+  description: () => faker.lorem.sentence(),
+  zip: () => faker.random.number({ min: 1000, max: 2000 }).toString(),
+  city: () => faker.address.city(),
+  street: () => faker.address.streetName(),
+  number: () => faker.random.number().toString(),
+  lot: () => faker.finance.account(6) + '/' + faker.finance.account(4),
+  avatar: 'http://4narchitects.hu/wp-content/uploads/2016/07/LEPKE-1000x480.jpg',
+  taxNo: () => faker.finance.account(6) + '-2-42',
+  settings: {
+    joinable: 'inviteOnly',
+    language: 'en',
+    ownershipScheme: 'condominium',
+    parcelRefFormat: 'bfdd',
+    templateId: () => Communities.findOne({ name: 'Honline Társasház Sablon', isTemplate: true })._id,
+    accountingMethod: 'accrual',
+    allowPostToGroupAccounts: true,
+    enableMeterEstimationDays: 5,
+  },
+});

@@ -1,0 +1,113 @@
+<template name="Message_subscriber">
+</template>
+
+<template name="Message_history">
+    {{#let lastStatusChangeId=lastStatusChange._id}}
+    {{#each messages}}
+        {{#if equals this.category 'comment'}}
+            <div class="chat-message {{leftOrRight this}}">
+                <img class="message-avatar" src="{{absoluteUrl creator.avatar}}" alt="avatar" >
+                <div class="message">
+                    <a class="message-author" href=""> {{creator.displayOfficialName}} </a>
+                    <span class="message-date"> {{displayTimeFrom createdAt}} </span>
+                    <span class="message-content newlines">{{text}}</span>
+                </div>
+            </div>
+        {{else if equals this.category 'statusChange'}}
+        <div class="chat-message {{leftOrRight this}}">
+            <img class="message-avatar" src="{{absoluteUrl creator.avatar}}" alt="avatar" >
+            <div class="message">
+                <a class="message-author" href=""> {{creator.displayOfficialName}} </a>
+                <span class="message-date"> {{displayTimeFrom createdAt}} </span>
+                <span class="message-content newlines text-muted">{{_ 'actions.statusChange.did'}}: <strong>{{_ (concat 'schemaWorkflow.status.options.' this.status)}}</strong></span>
+                {{#if includes statusesWithDataUpdate this.status }}
+                <span class="message-content newlines text-muted"><strong>{{_ 'schemaDeals.text.label'}}</strong>: {{>ChoppedHeight text=this.dataUpdate.text height=100 markdown=true}}</span>
+                <span class="message-content newlines text-muted"><strong>{{_ 'schemaDeals.quantity.label'}}</strong>: {{this.dataUpdate.quantity}} {{this.dataUpdate.uom}}</span>
+                <span class="message-content newlines text-muted"><strong>{{_ 'schemaDeals.price.label'}}</strong>: {{displayMarketplaceCurrency this.dataUpdate.price}}</span>
+                {{/if}}
+            </div>
+            {{#if (equals this._id lastStatusChangeId) }}
+            <div class="text-center">
+                {{>Action_buttons_group collection='deals' doc=this.topic.deal size='md'}}
+            </div>
+            {{/if}}
+        </div>
+        {{/if}}
+    {{/each}}
+    {{/let}}
+</template>
+
+<template name="Message_send">
+    <div class="chat-form">
+        <form role="form">
+            <div class="form-group">
+                <textarea class="form-control js-focused" placeholder={{_ 'messengerMessagePlaceholder'}}></textarea>
+            </div>
+            <div class="pull-left">
+                {{#if currentUserHasPermission 'room.remove'}}
+                <span class="btn btn-sm btn-danger btn-outline m-t-n-xs js-delete"><strong>{{_ 'Delete chat room'}}</strong></span>
+                {{/if}}
+                {{#if this.deal}}
+                {{>Action_buttons_group collection='deals' doc=this.deal size='md' class="m-t-n-xs"}}
+                {{/if}}
+            </div>
+            <div class="text-right">
+                <span class="btn btn-sm btn-primary m-t-n-xs js-send"><i class="fa fa-paper-plane"></i> <strong>{{_ 'Send message'}}</strong></span>
+            </div>
+        </form>
+    </div>
+</template>
+
+<template name="Room_show">
+    <div class="wrapper wrapper-content animated fadeInUp">
+
+        {{#if selectedRoom}} 
+        <div class="row">
+            <div class="col-md-3 visible-md visible-lg pull-right">
+                {{#if selectedPerson}}
+                <div>
+                    {{> Contact_long selectedPerson}}
+                </div>
+                {{/if}}
+                {{#if equals selectedRoom.title 'deal chat'}}
+                <div>
+                    {{> Listing_box selectedListing}}
+                </div>
+                {{/if}}
+            </div>
+            <div class="col-md-9">
+                <div class="ibox chat-view messages">
+                    <div class="ibox-title">
+                        {{#if hasMessages}}
+                        <small class="pull-right text-muted">{{_ 'Last message'}}: 
+                            <br class="rwd-break">{{selectedRoom.updatedAt.toLocaleString}}</small>
+                            {{>Action_buttons_group doc=this collection='topics' actions='delete' size='lg'}}
+                        {{/if}}
+                        <strong>{{selectedPerson.displayOfficialName}} - {{_ selectedRoom.text}} [{{_ selectedRoom.title}}]</strong>
+                    </div>
+
+                    <div class="ibox-content">
+                        <div class="chat-discussion">
+                            {{> Message_subscriber}}
+                            {{#if hasMessages}}
+                            <div class="messages">
+                                {{> Message_history}}
+                            </div>
+                            {{else}}
+                            <div class="messages text-center empty">
+                                {{{_ 'messengerHistoryPlaceholder'}}}
+                            </div>
+                            {{/if}}
+                        </div>
+                    </div>
+                    <div class="ibox-footer">
+                        {{> Message_send selectedRoom}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{else}}
+        <div>{{_ 'noSelectedPerson'}}</div>
+        {{/if}}
+    </div>    
+</template>

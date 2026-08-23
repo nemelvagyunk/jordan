@@ -1,0 +1,40 @@
+<template name="Ledger_report">
+    <div class="table-responsive">
+    <table id="ledger" class="table table-bordered table-condensed ">
+        <thead>
+          <tr class="table-row">
+              <td><strong>{{_ 'Account'}}</strong></td>
+              <td><strong>{{_ 'schemaTransactions.debit.label'}}</strong></td>
+              <td><strong>{{_ 'schemaTransactions.credit.label'}}</strong></td>
+              <td><strong>{{firstChar (_ 'schemaTransactions.debit.label')}} {{_ 'Balance'}}</strong></td>
+              <td><strong>{{firstChar (_ 'schemaTransactions.credit.label')}} {{_ 'Balance'}}</strong></td>
+          </tr>
+        </thead>
+        <tbody>
+            {{#each account in accounts}}
+            {{#if hasActivity account}}
+            <tr class="table-row {{headerLevelClass account}}">
+                <td class="row-header nowrap" data-account="{{account.code}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{account.displayFull}}
+                </td>
+                {{#let balance=(getBalance account tag tagtype) }}
+                <td class="cell nowrap {{negativeClass balance.debitSum}}" data-account="{{account.code}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{displayNumber balance.debitSum}}
+                </td>
+                <td class="cell nowrap {{negativeClass balance.creditSum}}" data-account="{{account.code}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{displayNumber balance.creditSum}}
+                </td>
+                <td class="cell nowrap {{negativeClass balance.debitTotal}}" data-account="{{account.code}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{displayNumber balance.debitTotal}}
+                </td>
+                <td class="cell nowrap {{negativeClass balance.creditTotal}}" data-account="{{account.code}}" data-tag="{{tag}}" style="cursor: pointer">
+                    {{displayNumber balance.creditTotal}}
+                </td>
+                {{/let}}
+            </tr>
+            {{/if}}
+            {{/each}}
+        </tbody>
+    </table>
+    </div>
+</template>

@@ -1,0 +1,49 @@
+<template name="Accounting_ledger">
+    {{#if currentUserHasPermission 'balances.inCommunity'}}
+     <div class="row">
+        <p class="col-sm-6">
+            {{_ 'Select a period for general ledger data'}}<br>
+            {{_ 'Clicking on a cell, you can view the relating bill history'}}<br>
+            {{#if accountingClosedAt}}
+            [{{_ 'schemaAccountingPeriods.accountingClosedAt'}}: {{displayDate accountingClosedAt}}]<br>
+            {{/if}}
+        </p>
+        <div class="col-sm-3 form-group">
+            <label class="control-label" for="period">{{_ 'period'}}</label>
+            <select id="period" name="period" {{b 'options: periodOptions, value: periodSelected, optionsValue: value, optionsText: label'}} class="form-control"></select>
+        </div> 
+        <div class="col-sm-3 form-group">
+            <div><label><input type="checkbox" id="openingOnlyCheckbox" name="openingOnlyCheckbox" {{b "check: showOpeningOnly"}}> {{_ 'Show opening of period'}}</label></div>
+            <div><label><input type="checkbox" id="trafficOnlyCheckbox" name="trafficOnlyCheckbox" {{b "check: showTrafficOnly"}}> {{_ 'Show change during period'}}</label></div>
+            <div><label><input type="checkbox" id="technicalCheckbox" name="technicalCheckbox" {{b "check: showTechnicalAccounts"}}> {{_ 'Show technical accounts'}}</label></div>
+        </div>
+    </div>
+    {{#if currentUserHasPermission 'transactions.inCommunity'}}
+    <div class="row m-b-sm">
+            {{#if currentUser.super}}
+            <div class="col-sm-6">
+                <button class="btn btn-danger js-check-journals"><i class="fa fa-list"></i> {{_ 'Check journals'}}</button>
+                <button class="btn btn-danger js-fix-balances"><i class="fa fa-wrench"></i> {{_ 'Fix balances'}}</button>
+            </div>
+            {{/if}}
+            <div class="col-sm-6 btn-group pull-right">
+                {{#if currentUserHasPermission 'transactions.insert'}}
+                    {{#if selectedPeriodIsOpen}}
+                    <button class="btn btn-default js-close" title="{{_ 'Closed at'}}: {{accountingClosedAt}}"><i class="fa fa-lock"></i> {{_ 'Close period'}}</button>
+                    {{else}}
+                    <button class="btn btn-default js-open" title="{{_ 'Closed at'}}: {{accountingClosedAt}}"><i class="fa fa-unlock"></i> {{_ 'Open period'}}</button>
+                    {{/if}}
+                    {{#if (and community.settings.balancesUploaded (currentUserHasPermission 'transactions.upsert')) }}
+                    <button class="btn btn-default js-import" title="{{_ 'upload'}}"><i class="fa fa-upload"></i> {{_ 'Upload balances'}}</button>
+                    {{/if}}
+                {{/if}}
+                <button class="btn btn-default js-copy"><i class="fa fa-copy"></i> {{_ 'Copy'}}</button>
+                <button class="btn btn-default js-excel"><i class="fa fa-file-excel-o"></i> {{_ 'Excel'}}</button>
+                <button class="btn btn-default js-journals"><i class="fa fa-list"></i> {{_ 'Full journal list'}}</button>
+                <!--button class="btn btn-default js-income-statement"><i class="fa fa-list"></i> {{_ 'Income statement'}}</button-->
+            </div>
+        </div>
+        {{/if}}
+        {{> Ledger_report accounts=accounts tag=periodSelected tagtype=tagtypeSelected }}
+    {{/if}}
+</template>

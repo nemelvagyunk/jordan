@@ -1,0 +1,460 @@
+{
+ "actions": {
+    "create": {
+      "label": "new",
+      "do": "create",
+      "doing": "create",
+      "done": "created"
+    },
+    "view": {
+      "label": "view",
+      "do": "view",
+      "doing": "view"
+    },
+    "edit": {
+      "label": "edit",
+      "do": "edit",
+      "doing": "edit",
+      "done": "modified"
+    },
+    "delete": {
+      "label": "delete",
+      "do": "delete",
+      "doing": "delete",
+      "done": "deleted"
+    }, 
+    "archive": {
+      "label": "archive",
+      "do": "archive",
+      "doing": "archive",
+      "done": "archived"
+    },
+    "import": {
+      "label": "import",
+      "do": "import",
+      "doing": "import",
+      "done": "imported"
+    },
+    "zip": {
+      "label": "export",
+      "do": "export",
+      "doing": "export",
+      "done": "exported"
+    },
+    "join": {
+      "label": "join",
+      "done": "joined"
+    },
+    "move": {
+      "label": "move",
+      "do": "move",
+      "doing": "move",
+      "done": "moved"
+    },
+    "merge": {
+      "label": "merge",
+      "do": "merge",
+      "doing": "merge",
+      "done": "merged"
+    },
+    "apply": {
+      "label": "apply",
+      "do": "apply",
+      "doing": "apply",
+      "done": "applied"
+    },
+    "viewLastApplies": {
+      "label": "view last applications"
+    },
+    "post": {
+      "label": "post",
+      "do": "post",
+      "doing": "post",
+      "done": "posted"
+    },
+    "close": {
+      "label": "close",
+      "do": "close",
+      "doing": "close",
+      "done": "closed"
+    },
+    "reconcile": {
+      "label": "reconcile",
+      "do": "reconcile",
+      "doing": "reconcile",
+      "done": "reconciled"
+    },
+    "registerReading": {
+      "label": "register reading",
+      "do": "register reading of",
+      "doing": "register reading",
+      "done": "reading registered"
+    },
+    "editReadings": {
+      "label": "edit previous readings",
+      "do": "edit previous readings of",
+      "doing": "edit previous readings",
+      "done": "previous readings modified"
+    },
+    "statusChange": {
+      "label": "change status",
+      "do": "change status of",
+      "doing": "change status",
+      "done": "status changed",
+      "did": "changed the status"
+    },
+    "statusUpdate": {
+      "label": "update status",
+      "do": "update status of",
+      "doing": "update status",
+      "done": "status updated",
+      "did": "updated the status"
+    },
+    "categoryChange": {
+      "label": "category change",
+      "do": "change category of",
+      "doing": "change category",
+      "done": "category changed",
+      "did": "changed the category"
+    },
+    "period": {
+      "label": "update period",
+      "do": "update period of",
+      "doing": "update period",
+      "done": "period updated"
+    },
+    "invite": {
+      "label": "invite",
+      "do": "invite",
+      "doing": "invite",
+      "done": "invited"
+    },
+    "approve": {
+      "label": "approve",
+      "help": "Listed here you see the submitted but not yet approved applicatios. You can approve them by editing and saving them. While editing, you may modify any data, or leave everything as submitted and save it. Saving it by you makes it approved. To reject them, simply delete them.", 
+      "do": "approve",
+      "doing": "approve",
+      "done": "approved"
+    },
+    "send": {
+      "label": "send",
+      "do": "send",
+      "doing": "send",
+      "done": "sent"
+    },
+    "resend": {
+      "label": "resend",
+      "do": "resend",
+      "doing": "resend",
+      "done": "resent"
+    },
+    "repost": {
+      "label": "repost",
+      "do": "repost",
+      "doing": "repost",
+      "done": "reposted"
+    },
+    "recognize": {
+      "label": "recognize",
+      "do": "recognize",
+      "done": "recognized"
+    },
+    "autoReconcile": {
+      "label": "auto reconcile",
+      "do": "auto reconcile",
+      "done": "auto reconciled"
+    } ,
+   "revoke": {
+      "do": "revoke",
+      "done": "revoked"
+    },
+    "refuse": {
+      "do": "refuse",
+      "done": "refused"
+    },
+    "enable": {
+      "do": "enable",
+      "done": "enabled"
+    },    
+    "disable": {
+      "do": "disable",
+      "done": "disabled"
+    },
+    "inquireDeal": {
+      "label": "message the lister",
+      "do": "message the lister",
+      "doing": "messaging the lister"
+    },
+    "requestDeal": {
+      "customer": {
+        "label": "request",
+        "do": "request",
+        "done": "requested"
+      },
+      "supplier": {
+        "label": "offer",
+        "do": "offer",
+        "done": "offered"
+      }
+    },
+    "confirmDeal": {
+      "label": "confirm",
+      "do": "confirm",
+      "doing": "confirming",
+      "done": "confirmed"
+    },
+    "cancelDeal": {
+      "label": "cancel",
+      "do": "cancel",
+      "done": "canceled"
+    },
+    "proposeDeal": {
+      "label": "propose",
+      "do": "propose",
+      "doing": "proposing",
+      "done": "proposed"
+    },
+    "reviewDeal": {
+      "label": "review",
+      "do": "review",
+      "done": "reviewed"
+    },
+    "initiate": {
+      "label": "initiate",
+      "do": "initiate",
+      "doing": "initiating",
+      "done": "initiated"
+    }
+  },
+
+  "entities": {
+    "community": {
+      "label": "community",
+      "it": "the community"
+    },
+    "parcel": {
+      "label": "parcel",
+      "it": "the parcel"
+    },
+    "property": {
+      "label": "holding",
+      "it": "the holding"
+    },
+    "common": {
+      "label": "common property",
+      "it": "the common property"
+    },
+    "group": {
+      "label": "group",
+      "it": "the group"
+    },
+    "tag": {
+      "label": "tag",
+      "it": "the tag"
+    },
+    "membership": {
+      "label": "membership",
+      "it": "the membership"
+    },
+    "ownership": {
+      "label": "ownership",
+      "it": "the ownership"
+    },
+    "benefactorship": {
+      "label": "benefactorship",
+      "it": "the benefactorship"
+    },
+    "roleship": {
+      "label": "roleship",
+      "it": "the roleship"
+    },
+    "delegation": {
+      "label": "delegation",
+      "it": "the delegation"
+    },
+    "partner": {
+      "label": "partner",
+      "it": "the partner"
+    },
+    "contract": {
+      "label": "contract",
+      "it": "the contract"
+    },
+    "agenda": {
+      "label": "agenda",
+      "it": "the agenda"
+    },
+    "topic": {
+      "label": "topic",
+      "it": "the topic"
+    },
+    "forum": {
+      "label": "forum topic",
+      "it": "the forum topic"
+    },
+    "vote": {
+      "label": "vote",
+      "it": "the vote"
+    },
+    "news": {
+      "label": "news",
+      "it": "the news"
+    },
+    "ticket": {
+      "label": "ticket",
+      "it": "the ticket"
+    },
+    "issue": {
+      "label": "issue",
+      "it": "the issue"
+    },
+    "maintenance": {
+      "label": "maintenance",
+      "it": "the maintenance"
+    },
+    "upgrade": {
+      "label": "upgrade",
+      "it": "the upgrade"
+    },
+    "room": {
+      "label": "chatroom",
+      "it": "the chatroom"
+    },
+    "comment": {
+      "label": "comment",
+      "it": "the comment"
+    },
+    "statusChange": {
+      "label": "status change",
+      "it": "the status change"
+    },
+    "pointAt": {
+      "label": "pointer",
+      "it": "the pointer"
+    },
+    "meter": {
+      "label": "meter",
+      "it": "the meter"
+    },
+    "meterReading": {
+      "label": "meter reading",
+      "it": "the meter reading"
+    },
+    "parcelBilling": {
+      "label": "parcel billing",
+      "it": "the parcel billing"
+    },
+    "transaction": {
+      "label": "transaction",
+      "it": "the transaction"
+    },
+    "balance": {
+      "label": "balance",
+      "it": "the balance"
+    },
+    "bill": {
+      "label": "bill",
+      "it": "the bill"
+    },
+    "payment": {
+      "label": "payment",
+      "it": "the payment"
+    },
+    "exchange": {
+      "label": "exchange",
+      "it": "the exchange"
+    },
+    "receipt": {
+      "label": "receipt",
+      "it": "the receipt"
+    },
+    "transfer": {
+      "label": "transfer",
+      "it": "the transfer"
+    },
+    "opening": {
+      "label": "opening/closing",
+      "it": "the opening/closing"
+    },    
+    "freeTx": {
+      "label": "transaction",
+      "it": "the transaction"
+    },
+    "statementEntry": {
+      "label": "statement entry",
+      "it": "the statement entry"
+    },
+    "recognition": {
+      "label": "recognition rules",
+      "it": "the recognition rules"
+    },
+    "txdef": {
+      "label": "transaction type",
+      "it": "the transaction type"
+    },
+    "period": {
+      "label": "period",
+      "it": "the period"
+    },
+    "simpleAccount": {
+      "label": "account",
+      "it": "the account"
+    },
+    "cashAccount": {
+      "label": "cash account",
+      "it": "the cash account"
+    },
+    "bankAccount": {
+      "label": "bank account",
+      "it": "the bank account"
+    },
+    "outstandings reminder": {
+      "label": "outstandings reminder",
+      "it": "outstandings reminder"
+    },
+    "bucket": {
+      "label": "category",
+      "it": "the category"
+    },
+    "listing": {
+      "label": "listing",
+      "it": "the listing"
+    },
+    "deal": {
+      "label": "deal",
+      "it": "the deal"
+    },
+    "review": {
+      "label": "review",
+      "it": "the review"
+    },
+    "sharedfolder": {
+      "label": "folder",
+      "it": "the folder"
+    },
+    "shareddoc": {
+      "label": "document",
+      "it": "the document"
+    },
+    "settings": {
+      "label": "settings",
+      "it": "the settings"
+    },
+    "user": {
+      "label": "user",
+      "it": "the user"
+    },
+    "email": {
+      "label": "email",
+      "it": "the email"
+    },
+    "data": {
+      "label": "data",
+      "it": "the data"
+    },
+    "document": {
+      "label": "document",
+      "it": "the documentum"
+    }
+  }
+}

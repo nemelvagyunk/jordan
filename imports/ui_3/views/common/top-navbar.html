@@ -1,0 +1,98 @@
+<template name="Top_navbar">
+    <div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                {{#if currentUser}}
+                    <a id="navbar-minimalize" class="minimalize-styl-2 btn btn-primary " href=""><i class="fa fa-bars"></i> </a>
+                    <!--form role="search" class="navbar-form-custom" action="search_results">
+                        <div class="form-group">
+                            <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                        </div>
+                    </form-->
+                {{else}}
+                <a href="{{pathFor 'App intro'}}" id="logo" class="minimalize-styl-2">
+                    <img src="/images/logo-duo-text.png" width="80" alt="Logo">
+                </a>
+                <a class="minimalize-styl-2 btn btn-primary " href="{{pathFor 'signin'}}">
+                    <i class="fa fa-sign-in"></i> {{_ 'login'}}
+                </a>
+                {{/if}}
+            </div>
+            <ul class="nav navbar-top-links navbar-right">
+                {{#if currentUser}}
+                <li>
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="">
+                        <strong id="active-community-name" class="text-muted text-xs width-adjust">
+                            {{#if activeCommunity}}
+                                {{activeCommunity.name}}
+                            {{else}}
+                                {{_ 'No active' }} {{_ 'community'}}
+                            {{/if}}
+                            </strong>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu animated fadeInDown m-t-xs">
+                        {{#each userCommunities}}
+                        {{#let noti=(notiCount _id)}}
+                        <li><a href="" class="js-switch-community">{{name}} {{> Badge color='info' title=noti.titles value=noti.count}}</a></li>
+                        {{/let}}
+                        {{/each}}
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{{pathFor 'Communities list'}}"> + {{_ (concat 'Join a ' community.displayType)}} </a></li>
+                        <li><a class="js-create community" href=""> + {{_ (concat 'Create a ' community.displayType)}} </a></li>
+                        {{#if currentUser.super}}
+                            <li role="separator" class="divider"></li>
+                            {{#each superCommunities}}
+                            {{#let noti=(notiCount _id)}}
+                            <li><a href="" class="js-switch-community">{{name}} {{> Badge color='info' title=noti.titles value=noti.count}}</a></li>
+                            {{/let}}
+                            {{/each}}
+                        {{/if}}
+                        <li role="separator" class="divider"></li>
+                        <li><a href="" class="js-mark-all-read">{{_ 'Mark all notifications read'}} </a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="" id="user-menu-dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span>
+                            <strong id="username" class="font-bold hidden-xs hidden-sm">{{currentUser.displayProfileName}}</strong>                            
+                            <img alt="image" class="img-circle" src="{{absoluteUrl currentUser.avatar}}" width="32"/>
+                            <b class="caret"></b>
+                        </span>                        
+                        {{> Badge color=nameMismatchSeriousity title=(_ 'Name mismatch') value=nameMismatchCounter class="profil-badge"}}
+                    </a>
+                    <ul class="dropdown-menu pull-right animated fadeInDown m-t-xs" aria-labelledby="user-menu-dropdown">
+                        <li>                
+                            <a href="{{pathFor 'User data page' _id=currentUser._id}}">
+                                <i class="glyphicon glyphicon-cog" aria-hidden="true"></i> 
+                                {{_ 'Profile settings'}}
+                                {{> Badge color=nameMismatchSeriousity title=(_ 'Name mismatch') value=nameMismatchCounter style="vertical-align: text-bottom"}}
+                            </a>
+                        </li>
+                        <li>                
+                            <a href="{{pathFor 'changePwd'}}">
+                                <i class="glyphicon glyphicon-lock" aria-hidden="true"></i> 
+                                {{t9n 'updateYourPassword'}}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" class="js-logout">
+                                <i class="glyphicon glyphicon-log-out" aria-hidden="true"></i>
+                                {{t9n 'signOut'}}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a id="messages" class="right-sidebar-toggle count-info" href="">
+                        <i class="fa fa-envelope"></i>  
+                        {{#with unseenEventsCount}}
+                        {{> Badge color='danger' value=count class="label"}}
+                        {{/with}}
+                    </a>                    
+                </li>
+                {{/if}}
+            </ul>
+        </nav>
+    </div>
+</template>

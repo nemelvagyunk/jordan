@@ -1,0 +1,71 @@
+//progressbar
+.progressBar (@index) when (@index > -1){
+	.progressBar{
+		.progressLine[data-value="@{index}"]{
+			width:@index * 1%;
+			min-width: 2%;
+		}
+	}
+	.progressBar (@index - 1);
+}
+.progressBar(0){};
+.progressBar (@progressbar);
+
+.progressBar{
+  height: 17px;
+  width: 100%;
+  margin-top: 10px;
+  background-color: lighten(@color_progress, 30%);
+  .progressLine{
+    align: center;
+    height:100%;
+    position:relative;
+    // background-color:@color_progress;
+		background-color: @progressbar-bcg;
+    padding: 0px;
+    line-height: 1;
+    text-align: center;
+    color: @progressbar-color;
+    font-weight: bold;
+    font-size-adjust: 0.4;
+    letter-spacing: 1.5px;
+  }
+}
+
+// vertical progressbar
+.progressBar-v (@index) when (@index > -1){
+	.progressBar-v{
+		.progressLine-v[data-value="@{index}"]{
+			height: @index * 1%;
+			min-height: 2%;
+		}
+	}
+	.progressBar-v (@index - 1);
+}
+.progressBar-v(0){};
+.progressBar-v (@progressbar);
+
+.progressBar-v{
+  height: 100%;
+  width: 20px;
+  background-color: lighten(@color_progress, 30%);
+	border-radius: 3px;
+  .progressLine-v{
+		border-radius: inherit;
+		font-size: .9em;
+    padding-top: 5px;
+    align: center;
+    width:100%;
+    position:relative;
+		// background-color: @progressbar-bcg;
+		background-color: @pip-usericon-bcg;
+    padding: 0px;
+    line-height: 1;
+    text-align: center;
+    color: @progressbar-color;
+    font-weight: bold;
+		&:hover {
+			background-color: lighten(@pip-usericon-bcg, 5%);
+		}
+  }
+}

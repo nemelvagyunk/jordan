@@ -1,0 +1,23 @@
+<template name="Accounting_partner_ledger">
+    {{#if currentUserHasPermission 'balances.inCommunity'}}
+     <div class="row">
+        <p class="col-sm-6">
+            {{_ 'Select a period for general ledger data'}}<br>
+            {{_ 'Clicking on a cell, you can view the relating bill history'}}<br>
+        </p>
+        <div class="col-sm-3 form-group">
+            <label class="control-label" for="period">{{_ 'period'}}</label>
+            <select id="period" name="period" {{b 'options: periodOptions, value: periodSelected, optionsValue: value, optionsText: label'}} class="form-control"></select>
+        </div> 
+    </div>
+        {{#if currentUserHasPermission 'transactions.inCommunity'}}
+        <div class="row m-b-sm">
+            <div class="col-sm-3 btn-group pull-right">
+                <button class="btn btn-default js-copy"><i class="fa fa-copy"></i> {{_ 'Copy'}}</button>
+                <button class="btn btn-default js-excel"><i class="fa fa-file-excel-o"></i> {{_ 'Excel'}}</button>
+            </div>
+        </div>
+        {{/if}}
+        {{> Partner_ledger_report relation=relation contracts=contracts tag=periodSelected }}
+    {{/if}}
+</template>
