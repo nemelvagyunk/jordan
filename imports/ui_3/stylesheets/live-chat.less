@@ -55,18 +55,6 @@
     height: 100% !important;
 }
 
-@media screen and (max-width: 576px) {
-    #live-chat {
-        width: 85vw;
-        height: 100vh;
-        margin-left: 40px;
-    };
-  
-    .live-chat-config-box {
-        margin-right: -85vw;
-    }
-}
-
 /* Teljes kepernyos mod - a maximize-icon kapcsolja */
 .live-chat-config.maximized {
     top: 0;
@@ -83,5 +71,43 @@
     #live-chat {
         width: ~"calc(100vw - 40px)";
         height: 100vh;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    #live-chat {
+        width: 85vw;
+        height: 100vh;
+        margin-left: 40px;
+    };
+  
+    .live-chat-config-box {
+        margin-right: -85vw;
+    }
+
+    /* Telefonon a teljes kepernyo tenyleg teljes: nincs oldalsav,
+       a gombok halvanyan a video folott lebegnek */
+    .live-chat-config.maximized {
+        #live-chat {
+            width: 100vw;
+            margin-left: 0;
+        }
+
+        .spin-icon,
+        .maximize-icon {
+            position: absolute;
+            left: 4px;
+            z-index: 2200;
+            opacity: 0.75;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            color: white;
+            background: @red;
+        }
+
+        .spin-icon { top: 4px; }
+        .maximize-icon { top: 48px; }
     }
 }

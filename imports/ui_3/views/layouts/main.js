@@ -10,6 +10,7 @@ import '../common/ibox-tools.js';
 import '../common/navigation.js';
 import '../common/top-navbar.js';
 import '../common/live-chat.js';
+import '../common/live-vote.js';
 import '../common/page-heading.js';
 import '../common/footer.js';
 import '../common/tech-chat.js';

@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { Accounts as MeteorAccounts } from 'meteor/accounts-base';
 import { _ } from 'meteor/underscore';
 import { Migrations } from 'meteor/percolate:migrations';
 import { moment } from 'meteor/momentjs:moment';
@@ -1431,6 +1432,39 @@ Migrations.add({
 // Use only direct db operations to avoid unnecessary hooks!
 
 // Iterate on fetched cursors, if it runs a long time, because cursors get garbage collected after 10 minutes
+
+// --- SMART Tarsashazkezeles: demo haz tisztsegviseloinek atnevezese (sajat modositas) ---
+Migrations.add({
+  version: 81,
+  name: 'SMART demo restaff: Jordan (manager), attila (admin), Gutai Pal (gondnok), Lako Lajos es Freddy (lakok)',
+  up() {
+    const community = Communities.findOne({ name: 'Demo ház' });
+    if (!community) return;
+    const communityId = community._id;
+    function restaff(email, mods) {
+      const user = Meteor.users.findOne({ 'emails.0.address': email });
+      if (!user) return;
+      const sets = {};
+      if (mods.lastName !== undefined) sets['profile.lastName'] = mods.lastName;
+      if (mods.firstName !== undefined) sets['profile.firstName'] = mods.firstName;
+      if (mods.username) sets.username = mods.username;
+      if (mods.avatar) sets.avatar = mods.avatar;
+      if (Object.keys(sets).length) Meteor.users.update(user._id, { $set: sets });
+      if (mods.password) MeteorAccounts.setPassword(user._id, mods.password, { logout: false });
+      if (mods.partnerName) {
+        Partners.update({ communityId, userId: user._id, 'idCard.name': { $exists: true } },
+          { $set: { 'idCard.name': mods.partnerName } }, { multi: true });
+      }
+    }
+    restaff('manager@demo.hu', { lastName: 'Jordan', firstName: '', username: 'jordan', password: 'bajnok', partnerName: 'Jordan', avatar: '/images/brand/jordan.jpg' });
+    restaff('admin@demo.hu', { username: 'attila', password: 'kocka' });
+    // a 2-es lako a demo haz gondnoka (maintainer szerepkorrel) -> o lesz Gutai Pal
+    restaff('2.dummyuser@demo.hu', { lastName: 'Gutai', firstName: 'Pál', username: 'gutaipal', password: 'gondnok', partnerName: 'Gutai Pál' });
+    // az 5-os lako tisztseg nelkuli -> o lesz Lako Lajos
+    restaff('5.dummyuser@demo.hu', { lastName: 'Lakó', firstName: 'Lajos', username: 'lakolajos', password: 'lakolala', partnerName: 'Lakó Lajos' });
+    restaff('3.dummyuser@demo.hu', { lastName: 'Freddy', firstName: '', username: 'freddy', password: 'jofiu', partnerName: 'Freddy' });
+  },
+});
 
 Meteor.startup(() => {
   Migrations.unlock();

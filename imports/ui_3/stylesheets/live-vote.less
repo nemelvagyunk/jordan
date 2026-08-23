@@ -1,0 +1,80 @@
+/* Elo szavazas felugro panel - a video (maximized, z-index 3000) FOLOTT jelenik meg */
+.live-vote-stack {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3500;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.live-vote-panel {
+    position: relative;
+    background: #fff;
+    border: 2px solid @red;
+    border-radius: 8px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+    padding: 14px 18px;
+    width: 480px;
+    max-width: 94vw;
+    text-align: center;
+
+    .lv-close {
+        position: absolute;
+        top: 6px;
+        right: 10px;
+        cursor: pointer;
+        color: #999;
+    }
+
+    .lv-header {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: @red;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .lv-title {
+        font-size: 17px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .lv-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .lv-choice {
+        flex: 1 1 30%;
+        min-width: 90px;
+        font-size: 16px;
+        font-weight: 700;
+        padding: 10px 6px;
+        color: #fff;
+        background: #3a87ad;
+        border: none;
+    }
+
+    .lv-yes { background: #1ab394; }
+    .lv-no { background: @red; }
+    .lv-abstain { background: #888; }
+}
+
+@media screen and (max-width: 576px) {
+    .live-vote-stack {
+        bottom: 8px;
+        width: 96vw;
+    }
+
+    .live-vote-panel {
+        width: 100%;
+    }
+}

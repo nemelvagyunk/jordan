@@ -1,0 +1,16 @@
+<template name="Live_Vote">
+    <div class="live-vote-stack">
+        {{#each topic in openLiveVotes}}
+        <div class="live-vote-panel animated fadeInUp">
+            <div class="lv-close js-dismiss" data-topic="{{topic._id}}"><i class="fa fa-times"></i></div>
+            <div class="lv-header">{{_ "Live vote"}}</div>
+            <div class="lv-title">{{topic.title}}</div>
+            <div class="lv-buttons">
+                {{#each choice in topic.vote.choices}}
+                <button class="btn lv-choice {{choiceColor topic @index}} js-cast" data-topic="{{topic._id}}" data-index="{{@index}}">{{_ choice}}</button>
+                {{/each}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</template>
