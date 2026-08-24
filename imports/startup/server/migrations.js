@@ -14,6 +14,7 @@ import { Memberships } from '/imports/api/memberships/memberships.js';
 import { Notifications } from '/imports/api/notifications/notifications.js';
 import { Delegations } from '/imports/api/delegations/delegations.js';
 import { Topics } from '/imports/api/topics/topics.js';
+import { Agendas } from '/imports/api/agendas/agendas.js';
 import '/imports/api/topics/votings/votings.js';
 import { Comments } from '/imports/api/comments/comments.js';
 import { Parcels } from '/imports/api/parcels/parcels.js';
@@ -1463,6 +1464,34 @@ Migrations.add({
     // az 5-os lako tisztseg nelkuli -> o lesz Lako Lajos
     restaff('5.dummyuser@demo.hu', { lastName: 'Lakó', firstName: 'Lajos', username: 'lakolajos', password: 'lakolala', partnerName: 'Lakó Lajos' });
     restaff('3.dummyuser@demo.hu', { lastName: 'Freddy', firstName: '', username: 'freddy', password: 'jofiu', partnerName: 'Freddy' });
+  },
+});
+
+Migrations.add({
+  version: 82,
+  name: 'SMART demo: admin megjelenitett neve Gutai Attila (a fixture Juhász Patrik nevet generalt neki)',
+  up() {
+    const community = Communities.findOne({ name: 'Demo ház' });
+    if (!community) return;
+    const communityId = community._id;
+    const user = Meteor.users.findOne({ 'emails.0.address': 'admin@demo.hu' });
+    if (!user) return;
+    Meteor.users.update(user._id, { $set: { 'profile.lastName': 'Gutai', 'profile.firstName': 'Attila' } });
+    Partners.update({ communityId, userId: user._id, 'idCard.name': { $exists: true } },
+      { $set: { 'idCard.name': 'Gutai Attila' } }, { multi: true });
+  },
+});
+
+Migrations.add({
+  version: 83,
+  name: 'SMART: alapallapot = nem megy kozgyules (live flag torlese) + megszunt tisztsegek (moderator, konyvelo, penztaros, gondnok) kinevezeseinek eltavolitasa',
+  up() {
+    // 1. Semelyik kozgyules ne legyen "elo" alapbol
+    Agendas.update({ live: true }, { $set: { live: false } }, { multi: true });
+    // 2. A megszunt tisztsegek kinevezesei keruljenek ki (a lakok tulajdonosi
+    //    tagsagai megmaradnak - pl. Gutai Pal lakokent megmarad)
+    const abolishedRoles = ['moderator', 'accountant', 'treasurer', 'maintainer'];
+    Memberships.remove({ role: { $in: abolishedRoles } });
   },
 });
 
