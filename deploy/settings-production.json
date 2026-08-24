@@ -1,6 +1,7 @@
 {
   "public": {
-    "enableDemo": true
+    "enableDemo": true,
+    "jitsiDomain": "kacsacomb.duckdns.org"
   },
   "demoPassword": "jordan2026"
 }

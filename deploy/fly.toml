@@ -12,7 +12,7 @@ primary_region = "ams"
   HTTP_FORWARDED_COUNT = "1"
   # Meteor beallitasok egy sorban (a settings-production.json tartalma).
   # Ha valtoztatsz rajta, ezt a sort frissitsd, aztan: fly deploy
-  METEOR_SETTINGS = '{"public":{"enableDemo":true,"jitsiDomain":"meet.systemli.org"},"demoPassword":"jordan2026"}'
+  METEOR_SETTINGS = '{"public":{"enableDemo":true,"jitsiDomain":"kacsacomb.duckdns.org"},"demoPassword":"jordan2026"}'
 
 [http_service]
   internal_port = 3000
