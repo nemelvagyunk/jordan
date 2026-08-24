@@ -7,6 +7,7 @@ import { __ } from '/imports/localization/i18n.js';
 import { getActiveCommunityId, getActiveCommunity } from '/imports/ui_3/lib/active-community.js';
 
 import { Topics } from '/imports/api/topics/topics.js';
+import { Agendas } from '/imports/api/agendas/agendas.js';
 import '/imports/api/topics/methods.js';
 import '/imports/api/topics/actions.js';
 import '/imports/ui_3/views/blocks/action-buttons.js';
@@ -36,6 +37,26 @@ Template.Board.viewmodel({
     const communityId = this.communityId();
     const topicsCount = Topics.find({ communityId, category: 'vote', status: { $ne: 'closed' } }).count();
     return `${__('Active votings')} (${topicsCount})`;
+  },
+  // SMART atalakitas: a Fooldal tetejen a kovetkezo kiirt kozgyules
+  // (a mar elkezdodott is latszik meg 6 oraig)
+  nextAgenda() {
+    const communityId = this.communityId();
+    const cutoff = new Date(Date.now() - 6 * 60 * 60 * 1000);
+    const upcoming = Agendas.find({ communityId, scheduledAt: { $gte: cutoff } },
+      { sort: { scheduledAt: 1 } }).fetch()[0];
+    if (upcoming) return upcoming;
+    // ha nincs kiirt kovetkezo kozgyules, az elozo (legutobbi) latszik
+    return Agendas.find({ communityId },
+      { sort: { scheduledAt: -1, createdAt: -1 } }).fetch()[0];
+  },
+  isUpcomingAgenda(agenda) {
+    const cutoff = Date.now() - 6 * 60 * 60 * 1000;
+    return !!(agenda.scheduledAt && agenda.scheduledAt.getTime() >= cutoff);
+  },
+  agendaTopics(agenda) {
+    return Topics.find({ communityId: agenda.communityId, agendaId: agenda._id },
+      { sort: { createdAt: 1 } }).fetch();
   },
   topics(category) {
     const communityId = this.communityId();

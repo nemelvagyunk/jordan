@@ -71,6 +71,18 @@
   "voting member" : "teljes jogú tag",
   "Leaders": "Vezetők",
   "Other roles": "Egyéb tisztségek",
+  "Sort by serial": "Rendezés sorszám szerint",
+  "Sort by ownership share": "Rendezés tulajdoni hányad szerint",
+  "Birtokcsere": "Birtokcsere",
+  "Next assembly": "Következő közgyűlés",
+  "Previous assembly": "Előző közgyűlés",
+  "Agenda points": "Napirendi pontok",
+  "birtokcsere": {
+    "intro": "Lakásvásárlás (tulajdonosváltás) esetén itt vezetheti át az albetétet az új tulajdonosra. A lépések:",
+    "step1": "Keresse meg lent az albetét jelenlegi tulajdonosi bejegyzését, és zárja le (szerkesztés → megszűnés dátuma = az adásvétel napja).",
+    "step2": "Vegye fel az új tulajdonost a + gombbal: albetét, tulajdonos neve, tulajdoni hányad, kezdő dátum.",
+    "step3": "Ha megadja az új tulajdonos e-mail-címét, meghívót kap, és lakói fiókkal beléphet a rendszerbe."
+  },
 
   // routes
   "App home": "Online Átlátható Tásasházkezelés",
@@ -86,7 +98,7 @@
   "Agendas": "Közgyűlések",
   "Delegations": "Meghatalmazások",
   "Tickets report": "Hibabejelentés",
-  "Worksheets": "Munka követés",
+  "Worksheets": "Munkakövetés",
   "Contracts": "Szerződések",
   "Finances":"Pénzügyek",
   "Parcels finances": "Albetét elszámolás",
@@ -94,7 +106,7 @@
   "condo finances": "Ház pénzügyek",
   "Accounting": "Könyvelés",
   "community page": "Közösség lap",
-  "condo page": "Házlap",
+  "condo page": "Lakóközösség",
   "Marketplace": "Piactér",
   "Documentstore": "Dokumentumtár",
   "User data page": "Felhasználói adatlap",

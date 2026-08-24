@@ -3,45 +3,37 @@
     {{#if activeCommunity}}
     <div class="row">
 
-      <!-- right side -->
-      <div class="col-xs-12 {{lgCol 4}} pull-right">
-        {{> Balance_widget}}
-        {{> News}}
-      </div>
-
-      <div class="col-xs-12 col-lg-8">
-        {{#if community.isActiveModule 'voting'}}
-        {{#Collapse_section id='vote' title=activeVotingsTitle }}
-          {{#each topic in (topics 'vote')}}
-            {{> Topic_box topic=topic commentsIncluded=true}}
-          {{else}}
-            <!-- if no voting ~ empty state -->
-            <div class="vote-container white-box text-center">
-              <h3>
-                {{_ 'No active votes'}}
-              </h3>
-              <h4 class="m2em">
-                {{_ 'Latest votes'}}: <br /><span class="b"><a href="{{pathFor 'Votings'}}"><span class="em b">{{_ 'Votings'}}</span></a> &gt; <span class="em">{{_ 'Closed votings'}}</span></span>
-              </h4>
-          </div>
-          {{/each}}
-        {{/Collapse_section}}
-        {{/if}}
-
-        {{#if community.isActiveModule 'forum'}}
-        {{#Collapse_section id='forum' title='Forum' notFirst=(community.isActiveModule 'voting')}}
-          {{> New_forum_topic}}
-          {{#each topic in (topics 'forum')}}
-            {{> Topic_box topic=topic commentsIncluded=true}}
-          {{/each}}
-        {{/Collapse_section}}
-        {{/if}}
-
-        <div class="text-center">
-          <a href="{{pathFor 'Forum'}}" style="color: inherit">
-            <button type="button" class="btn btn-default" data-value="archived">{{_ 'More on the Forum'}} <i class="fa fa-long-arrow-right"></i></button>
-          </a>
+      {{!-- SMART atalakitas: Fooldal = kovetkezo kozgyules felul + szavazasok
+            + faliujsag; forum-folyam es egyenleg-widget eltavolitva --}}
+      <div class="col-xs-12 col-lg-8 col-lg-offset-2">
+        {{#with nextAgenda}}
+        <div class="ibox">
+        <div class="ibox-content">
+            <h2 class="m-b-xs"><i class="fa fa-legal"></i>
+                {{#if isUpcomingAgenda this}}{{_ 'Next assembly'}}{{else}}{{_ 'Previous assembly'}}{{/if}}</h2>
+            {{#if this.scheduledAt}}
+            <h3 class="text-navy m-t-xs">{{displayTime this.scheduledAt}}</h3>
+            {{/if}}
+            {{#if this.title}}<h4>{{this.title}}</h4>{{/if}}
+            {{#with agendaTopics this}}
+            {{#if this.length}}
+            <strong>{{_ 'Agenda points'}}:</strong>
+            <ol class="m-t-xs">
+                {{#each t in this}}
+                <li>{{t.title}} {{> Attachments doc=t}}</li>
+                {{/each}}
+            </ol>
+            {{/if}}
+            {{/with}}
         </div>
+        </div>
+        {{/with}}
+        {{!-- SMART atalakitas: a bezs inline szavazodoboz SEHOL nem jelenik
+             meg - szavazni a felugro elo-szavazasban lehet (Live_Vote);
+             ezert az Aktiv szavazasok szekcio kikerult a Fooldalrol --}}
+
+        {{!-- SMART atalakitas: faliujsag (News) - a KK szerkeszti --}}
+        {{> News}}
 
       </div>
 

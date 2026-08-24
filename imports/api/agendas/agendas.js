@@ -28,6 +28,9 @@ Agendas.schema = new SimpleSchema({
   communityId: { type: String, regEx: SimpleSchema.RegEx.Id, autoform: { type: 'hidden' } },
   live: { type: Boolean, optional: true, autoform: { type: 'hidden' } },
   title: { type: String, max: 100, optional: true },
+  // SMART atalakitas: a kozgyules kiirt idopontja (nap + ora) - a Fooldal
+  // tetejen ebbol jelenik meg a kovetkezo kozgyules
+  scheduledAt: { type: Date, optional: true, autoform: { type: 'datetime-local' } },
 //  topicIds: { type: Array, defaultValue: [] },
 //  'topicIds.$': { type: String, regEx: SimpleSchema.RegEx.Id, autoform: chooseTopic },
 });

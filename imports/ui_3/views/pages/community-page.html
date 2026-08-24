@@ -216,13 +216,18 @@
         </div>
         <p>
             {{#if showAllParcels}}
-            {{_ 'List of parcels'}} - <i class="fa fa-building"></i> {{parcels.count}} {{> Help_icon title=(_ 'Number of parcels in the house')}}<br>
-            {{_ 'Click the little person buttons to see the occupants'}}
+            {{_ 'List of parcels'}} - <i class="fa fa-building"></i> {{parcels.count}} {{> Help_icon title=(_ 'Number of parcels in the house')}}
             {{else}}
             {{_ 'The list currently shows your own parcels'}} - <i class="fa fa-building"></i> {{parcels.count}}<br>
             {{_ 'Click the button on the right to see all parcels'}}                            
             {{/if}}
         </p>
+        <div class="btn-group m-b-sm">
+            <button class="btn btn-sm js-sort-serial {{#unless sortByUnits}}btn-primary{{else}}btn-default{{/unless}}">
+                <i class="fa fa-sort-numeric-asc"></i> {{_ 'Sort by serial'}}</button>
+            <button class="btn btn-sm js-sort-units {{#if sortByUnits}}btn-primary{{else}}btn-default{{/if}}">
+                <i class="fa fa-pie-chart"></i> {{_ 'Sort by ownership share'}}</button>
+        </div>
         <br>
         {{#if Template.subscriptionsReady}}
             {{> Active_archive_tabs name='parcels' tabs='active,unapproved' icon='fa-building' iconUnapproved='fa-building-o'

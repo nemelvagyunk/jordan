@@ -48,7 +48,9 @@ Template.Roleships_box.viewmodel({
   },
   officers() {
     const communityId = this.templateInstance.data.communityId();
-    const list = Memberships.findActive({ communityId, role: { $in: officerRoles } }, { sort: { createdAt: 1 } }).fetch();
+    // SMART atalakitas: az admin tisztseg rejtve marad a Tisztsegek listaban
+    const visibleOfficerRoles = _.without(officerRoles, 'admin');
+    const list = Memberships.findActive({ communityId, role: { $in: visibleOfficerRoles } }, { sort: { createdAt: 1 } }).fetch();
     return _.sortBy(list, m => rolesPriorities[m.role]);
   },
 });
@@ -128,6 +130,7 @@ Template.Contracts_box.viewmodel({
 
 Template.Parcels_box.viewmodel({
   showAllParcels: false,
+  sortByUnits: false, // SMART: false = sorszam szerint, true = tulajdoni hanyad szerint
   onCreated() {
     const user = Meteor.user();
     const communityId = this.templateInstance.data.communityId();
@@ -154,13 +157,23 @@ Template.Parcels_box.viewmodel({
   parcelsTableContent() {
     const communityId = this.templateInstance.data.communityId();
     const community = Communities.findOne(communityId);community.propertyCategory()
+    const vm = this; // SMART: a viewmodel elerese az options() zarvanyabol
     return {
       collection: 'parcels',
       selector: { communityId, category: { $in: ['@property', '%property'] } },
       options() {
         return () => {
+          // SMART atalakitas: ket rendezesi mod - sorszam (novekvo) vagy
+          // tulajdoni hanyad (csokkeno); a kapcsolok a tablazat felett
+          const columns = parcelColumns(community);
+          const serialIdx = columns.findIndex(c => c.data === 'serial');
+          const unitsIdx = columns.findIndex(c => c.data === 'units');
+          const order = (vm.sortByUnits() && unitsIdx >= 0)
+            ? [[unitsIdx, 'desc']]
+            : [[serialIdx, 'asc']];
           return {
-            columns: parcelColumns(community),
+            columns,
+            order,
             createdRow: highlightMyRow,
             tableClasses: 'display',
             language: datatables_i18n[TAPi18n.getLanguage()],
@@ -305,6 +318,13 @@ Template.Parcels_box.events({
   'click .parcels .js-show-all'(event, instance) {
     const oldVal = instance.viewmodel.showAllParcels();
     instance.viewmodel.showAllParcels(!oldVal);
+  },
+  // SMART atalakitas: rendezo kapcsolok
+  'click .parcels .js-sort-serial'(event, instance) {
+    instance.viewmodel.sortByUnits(false);
+  },
+  'click .parcels .js-sort-units'(event, instance) {
+    instance.viewmodel.sortByUnits(true);
   },
 });
 

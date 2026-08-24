@@ -25,18 +25,15 @@ export function parcelColumns(community) {
     community?.hasPhysicalLocations() && 
       { data: 'location()', title: __('schemaParcels.location.label') },
     { data: 'type', title: __('schemaParcels.type.label') },
-    Meteor.user().hasPermission('parcels.insert') &&
-      { data: 'group', title: __('schemaParcels.group.label') },
+    // SMART atalakitas: csoport/kategoria oszlop kiveve (Attila kerese)
     community?.hasPhysicalLocations() && 
       { data: 'lot', title: __('schemaParcels.lot.label') },
     community?.hasPhysicalLocations() && 
       { data: 'area', title: __('schemaParcels.area.label'), render: Render.formatNumber(2) },
     community?.hasVotingUnits() && 
       { data: 'units', title: __('schemaParcels.units.label'), render: Render.formatNumber(2) },
-    { data: '_id', title: __('Action buttons'), render: Render.actionButtons,
-      createdCell: (cell, cellData, rowData) => ReactiveDatatable.renderWithData(Template.Action_buttons_group,
-      { doc: cellData, collection: 'parcels', actions: 'view,edit,delete,occupants,meters,contracts', size: 'sm' }, cell),
-    },
+    // SMART atalakitas: akciogomb-oszlop kiveve (Attila kerese) - a
+    // letrehozas/import gombok a tablazat feletti fejlecben maradtak
     { data: 'occupants()', title: __('occupants'), render: Render.joinOccupants },
   ].filter(c => c);
 }

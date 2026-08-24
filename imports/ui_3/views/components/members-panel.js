@@ -87,7 +87,8 @@ Template.Members_panel.viewmodel({
   leaders() {
     const communityId = ModalStack.getVar('communityId');
     const partnerSearch = Session.get('messengerPartnerSearch');
-    let managers = Memberships.findActive({ communityId, role: { $in: leaderRoles }, userId: { $exists: true, $ne: Meteor.userId() } }).fetch();
+    // SMART atalakitas: az admin rejtve marad a kapcsolatlistaban is
+    let managers = Memberships.findActive({ communityId, role: { $in: _.without(leaderRoles, 'admin') }, userId: { $exists: true, $ne: Meteor.userId() } }).fetch();
     managers = _.uniq(managers, false, m => m.userId);
     if (partnerSearch) {
       managers = managers.filter(m => m.partner() && m.partner().displayName().toLowerCase().search(partnerSearch.toLowerCase()) >= 0);

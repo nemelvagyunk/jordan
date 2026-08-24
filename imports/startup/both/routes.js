@@ -34,6 +34,7 @@ if (Meteor.isClient) {
   import '/imports/ui_3/views/pages/room-show.js';
   import '/imports/ui_3/views/pages/forum-topics.js';
   import '/imports/ui_3/views/pages/community-page.js';
+  import '/imports/ui_3/views/pages/birtokcsere.js';
   import '/imports/ui_3/views/pages/tickets.js';
   import '/imports/ui_3/views/pages/worksheets.js';
   import '/imports/ui_3/views/pages/contracts.js';
@@ -137,6 +138,15 @@ defineRoute('/community', {
   },
 });
 CommunityRelatedRoutes.push('Community page');
+
+// SMART atalakitas: Birtokcsere oldal (tulajdonosvaltas lakasvasarlaskor)
+defineRoute('/birtokcsere', {
+  name: 'Birtokcsere',
+  action() {
+    BlazeLayout.render('Main_layout', { content: 'Birtokcsere_page' });
+  },
+});
+CommunityRelatedRoutes.push('Birtokcsere');
 
 defineRoute('/launch', {
   name: 'Community launch',

@@ -1,0 +1,26 @@
+<template name="Birtokcsere_page">
+    <div class="wrapper wrapper-content animated fadeInUp">
+        <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+            <div class="ibox-content">
+                <h2><i class="fa fa-exchange"></i> {{_ 'Birtokcsere'}}</h2>
+                <p>{{_ 'birtokcsere.intro'}}</p>
+                <ol>
+                    <li>{{_ 'birtokcsere.step1'}}</li>
+                    <li>{{_ 'birtokcsere.step2'}}</li>
+                    <li>{{_ 'birtokcsere.step3'}}</li>
+                </ol>
+            </div>
+            </div>
+            {{#if currentUserHasPermission 'memberships.inCommunity' communityIdObject}}
+            <div class="ibox memberships">
+            <div class="ibox-content">
+                {{> Ownerships_box reactiveContext}}
+            </div>
+            </div>
+            {{/if}}
+        </div>
+        </div>
+    </div>
+</template>

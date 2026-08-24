@@ -723,7 +723,11 @@
   "schemaAgendas": {
     "title": {
       "label": "Név",
-      "placeholder": "(pl. Közgyűlés 2017-II.)"
+      "placeholder": "(pl. Közgyűlés 2026-II.)"
+    },
+    "scheduledAt": {
+      "label": "Időpont (nap és óra)",
+      "placeholder": "A közgyűlés kezdete"
     },
     "topicIds": {
       "label": "Napirendi pontok"

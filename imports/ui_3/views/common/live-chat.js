@@ -43,6 +43,11 @@ export function joinLiveChat(user, doc) {
     roomName,
     parentNode: $('#live-chat')[0],
     configOverwrite: {
+      // SMART: a KK-n kivul mindenki nemitva kezd - az 1. resztvevo a moderator
+      // (KK), mert a szoba csak az o belepesevel indul; a tobbiek nemitva jonnek be.
+      // A KK a resztvevo-listabol kerheti a lako mikrofonjanak bekapcsolasat
+      // (kezfeltevesnel), es barkit vissza is nemithat.
+      startAudioMuted: 1,
       disableDeepLinking: true, // telefonon ne az appboltba kuldje a lakot, maradjon a bongeszoben
       // A fontos gombok keruljenek elore - igy a kezfelteves lakoi fiokbol,
       // telefonon is elerheto (ami kifer, latszik, a tobbi a ... menube kerul)
