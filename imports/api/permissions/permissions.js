@@ -219,12 +219,10 @@ export const Permissions = [
   { name: 'feedback.statusChange.deleted.leave',    roles: nobody },
 ];
 
-// The board member has now exactly the same permissions as the manager
+// SMART atalakitas: a 'board' tobbe NEM vezetoi rang (szamvizsgalo elnok
+// cim lett, kulon jogosultsag nelkul) - ezert nem kap manager-jogokat.
 Permissions.forEach((perm) => {
   if (!_.contains(perm.roles, 'admin')) perm.roles.push('admin'); // Admin can do anything
-  if (_.contains(perm.roles, 'manager')) {
-    if (!_.contains(perm.roles, 'board')) perm.roles.push('board'); // The board member has now exactly the same permissions as the manager
-  }
 });
 
 /* what if more compacted...

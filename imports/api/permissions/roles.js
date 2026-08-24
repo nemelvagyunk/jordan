@@ -29,8 +29,11 @@ export const exceptAdmin = _.without(everyRole, 'admin');
 export const nobody = [];
 export const occupantRoles = ['owner', 'benefactor'];
 export const nonOccupantRoles = _.without(everyRole, occupantRoles);
-export const leaderRoles = ['admin', 'manager', 'board'];
-export const nonLeaderRoles = ['moderator', 'accountant', 'treasurer', 'overseer', 'maintainer'];
+// SMART atalakitas: pontosan 4 tisztseg marad - admin, kozos kepviselo (manager),
+// szamvizsgalo elnok (board - jogok nelkul), szamvizsgalo (overseer - jogok nelkul).
+// A tobbi (moderator, accountant, treasurer, maintainer) nem osztogato tisztseg tobbe.
+export const leaderRoles = ['admin', 'manager'];
+export const nonLeaderRoles = ['board', 'overseer'];
 export const officerRoles = _.union(leaderRoles, nonLeaderRoles);
 export const autoAssignedRoles = ['delegate', 'guest'];
 export const votingRoles = ['owner', 'delegate'];

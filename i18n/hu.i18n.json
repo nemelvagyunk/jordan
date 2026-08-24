@@ -58,7 +58,7 @@
   // roles
   "admin": "admin",
   "manager": "közös képviselő",
-  "board": "intéző",
+  "board": "számvizsgáló elnök",
   "owner": "tulajdonos",
   "benefactor": "használó",
   "moderator": "moderátor",
@@ -80,7 +80,7 @@
   "Board": "Főoldal",
   "Messages": "Üzenetek",
   "Forum": "Fórum",
-  "Decision making": "Döntéshozatal",
+  "Decision making": "Közgyűlések",
   "Maintenance": "Üzemeltetés",
   "Votings": "Szavazások",
   "Agendas": "Közgyűlések",

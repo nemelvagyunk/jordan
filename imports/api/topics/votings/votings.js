@@ -57,9 +57,11 @@ function possibleEffectValues() {
 }
 
 Votings.voteSchema = new SimpleSchema({
-  procedure: { type: String, allowedValues: Votings.voteProcedureValues, autoform: { defaultValue: 'online', ...allowedOptions(), ...noUpdate } },
-  effect: { type: String, allowedValues: Votings.voteEffectValues, autoform: { defaultValue: 'poll', ...autoformOptions(possibleEffectValues, 'schemaVotings.vote.effect.options.'), ...noUpdate } },
-  type: { type: String, allowedValues: Votings.voteTypeValues, autoform: { ...allowedOptions(), ...noUpdate } },
+  // SMART atalakitas: kozgyulesi szavazas mindig online, jogeros es igen/nem/tartozkodom
+  // (a mezok rejtettek, fix alapertekkel - a regi ertekek adatban ervenyesek maradnak)
+  procedure: { type: String, allowedValues: Votings.voteProcedureValues, autoform: { type: 'hidden', defaultValue: 'online', ...noUpdate } },
+  effect: { type: String, allowedValues: Votings.voteEffectValues, autoform: { type: 'hidden', defaultValue: 'legal', ...noUpdate } },
+  type: { type: String, allowedValues: Votings.voteTypeValues, autoform: { type: 'hidden', defaultValue: 'yesno', ...noUpdate } },
   choices: {
     type: Array,
     autoValue() { // we also use an autorun to dynamically set this in the voting-edit window

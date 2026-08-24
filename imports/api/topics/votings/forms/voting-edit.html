@@ -46,29 +46,16 @@
                         <div class="row">
                         <div class="col-xs-10">{{_ choice}}</div>
                         <div class="col-xs-2 text-right">
-                            {{#unless updateForm}}
-                            <i class="text-right glyphicon glyphicon-remove js-remove-choice" data-index="{{@index}}" data-choice={{choice}} aria-hidden="true"></i>
-                            {{/unless}}
+                            <!-- SMART: fix opciok, nem torolhetok -->
                         </div>
                         </div>
                     </li>
                     {{/each}}
                 </ul>
             </div>
-            <div class="row choice editing hidden">
-                <div class="col-xs-12 choice-rect">
-                <input type="text" class="form-control js-enter-choice" name="new-choice" placeholder="pl. Nem szeretnék, de jó ötlet">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 text-center m-b-md">
-                <button type="button" class="btn btn-info js-add-choice {{#if updateForm}}disabled{{/if}}">
-                  <i class="fa fa-plus"></i> {{_ "new"}} {{_ "choice"}}</button>
-                </div>
-            </div>
-            {{> afQuickField name="vote.allowAddChoices"}}
+            <!-- SMART atalakitas: fix igen/nem/tartozkodom opciok - nincs sajat
+                 opcio hozzaadas, nincs tipus/hatas valasztas -->
             {{> afQuickField name="vote.successPct"}}
-            {{> afQuickField name="vote.clearPctRequired" type="boolean-checkbox"}}
         </div>
 
         <div class="row">

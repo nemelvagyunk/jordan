@@ -56,12 +56,8 @@
                         {{> Badge color='danger' title=(_ 'Todo') value=(needsAttentionCount 'vote') align='right'}}
                     </a>
                     <ul class="nav nav-second-level {{isActivePath regex='votings|agendas|delegations' className='submenu-open'}}">
-                        <li class="{{isActivePath regex='votings'}}">
-                            <a href="{{pathFor 'Votings'}}">
-                                <i class="glyphicon glyphicon-equalizer" aria-hidden="true"></i>
-                                <span class="nav-label">{{_ 'Votings'}}</span>
-                            </a>
-                        </li>
+                        <!-- SMART atalakitas: onallo Szavazasok menupont elrejtve -
+                             csak kozgyulesen beluli szavazas letezik -->
                         <li class="{{isActivePath regex='agendas'}}">
                             <a href="{{pathFor 'Agendas'}}">
                                 <i class="fa fa-list" aria-hidden="true"></i>
@@ -107,7 +103,9 @@
                     </ul>
                 </li>
                 {{/if}}
-                {{#if community.isActiveModule 'finances'}}
+                {{!-- SMART atalakitas: Penzugyek menu kikapcsolva - Jordan a
+                      konyvelest az eHAZ-ban vegzi, itt nem kell penzugy --}}
+                {{#if false}}
                 <li class="{{isActivePath regex='finances|inventory|accounting'}}">
                     <a class="js-submenu-toggle" href="#"><i class="glyphicon glyphicon-piggy-bank"></i>
                         <span class="nav-label">{{_ 'Finances'}}</span>
