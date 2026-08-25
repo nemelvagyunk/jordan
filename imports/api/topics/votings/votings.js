@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { AutoForm } from 'meteor/aldeed:autoform';
 import { moment } from 'meteor/momentjs:moment';
@@ -425,8 +426,89 @@ const votingFinished = {
   },
   onEnter(event, topic) {
     topic.voteEvaluate();
+    // SMART atalakitas (2026-08-25): lezaraskor az eredmeny + a jelenleti iv
+    // AUTOMATIKUSAN bekerul a kozgyules jegyzokonyvebe (Agendas.minutes).
+    if (Meteor.isServer) Votings.recordInMinutes(topic);
    // Topics.update(topic._id, { $set: { closesAt: new Date() } });
   },
+};
+
+// ---------------------------------------------------------------------------
+// AUTOMATIKUS JEGYZOKONYV
+// Minden szavazas lezarasakor lementjuk a napirendhez (Agendas.minutes):
+//   - a szavazas sorszama, cime, lezaras idopontja
+//   - az eredmeny (valaszonkent tulajdoni egyseg + szazalek)
+//   - a reszvetel (hany szavazo, hany tulajdoni egyseg, a haz szazalekaban)
+//   - a jelenleti iv: minden szavazasra jogosult neve + tulajdoni hanyada +
+//     szavazott-e (a KONKRET szavazat nem kerul bele - azt csak az eredmeny
+//     osszesitve tartalmazza)
+// Ha ugyanarra a szavazasra mar van bejegyzes (ujraertekeles), felulirjuk.
+// ---------------------------------------------------------------------------
+Votings.recordInMinutes = function recordInMinutes(topic) {
+  try {
+    const Agendas = Mongo.Collection.get('agendas');
+    if (!Agendas || !topic.agendaId) return;
+    const agenda = Agendas.findOne(topic.agendaId);
+    if (!agenda) return;
+    // FONTOS: a voteEvaluate() EPP MOST irta be az eredmenyt az adatbazisba,
+    // ezert frissen ujra be kell olvasni a topicot, kulonben meg a regi
+    // (ures) osszesites lenne benne.
+    const t = Topics.findOne(topic._id);
+    if (!t) return;
+    const community = Communities.findOne(t.communityId);
+    if (!community) return;
+
+    const choices = (t.vote && t.vote.choices) || [];
+    const results = t.voteResults || {};
+
+    const voterships = community.voterships();
+    const attendance = voterships.map((votership) => {
+      const partner = votership.partner();
+      const result = results[votership._id];
+      const castedVote = result && result.castedVote;
+      const votePath = (result && result.votePath) || [];
+      let viaName = null;   // ha meghatalmazott szavazott helyette
+      if (votePath.length > 1) {
+        const delegate = Partners.findOne(votePath[votePath.length - 1]);
+        if (delegate) viaName = delegate.toString();
+      }
+      return {
+        partnerId: votership.partnerId,
+        name: partner ? partner.toString() : '?',
+        votingUnits: Math.round(votership.votingUnits()),
+        voted: !!castedVote,
+        // NYILT szavazas: a jegyzokonyv nev szerint rogziti a leadott szavazatot
+        choice: (castedVote && castedVote.length) ? choices[castedVote[0]] : null,
+        choices: (castedVote || []).map(i => choices[i]),
+        viaName,
+      };
+    });
+
+    const record = {
+      topicId: t._id,
+      serial: t.serial,
+      title: t.title,
+      closedAt: new Date(),
+      results: t.voteSummaryDisplay(),
+      participation: {
+        count: t.voteParticipation ? t.voteParticipation.count : 0,
+        units: t.voteParticipation ? Math.round(t.voteParticipation.units) : 0,
+        percent: Number(t.votedPercent().toFixed(2)),
+      },
+      eligible: {
+        count: voterships.length,
+        units: Math.round(community.totalUnits()),
+      },
+      attendance,
+    };
+
+    const minutes = (agenda.minutes || []).filter(m => m.topicId !== t._id);
+    minutes.push(record);
+    Agendas.update(agenda._id, { $set: { minutes } });
+  } catch (err) {
+    // A jegyzokonyv-mentes soha ne akadalyozza meg a szavazas lezarasat
+    console.log('recordInMinutes failed:', err && err.message);
+  }
 };
 
 const closed = {

@@ -55,7 +55,10 @@
     height: 100% !important;
 }
 
-/* Teljes kepernyos mod - a maximize-icon kapcsolja */
+/* Teljes kepernyos mod - a maximize-icon kapcsolja.
+   SMART (2026-08-25): a video TENYLEG a teljes kepernyot toltse ki - a ket piros
+   gomb (video-ikon + kicsinyites) nem tol el egy 40px-es savot, hanem halvanyan
+   a video FOLOTT lebeg a bal felso sarokban. */
 .live-chat-config.maximized {
     top: 0;
     left: 0;
@@ -69,9 +72,31 @@
     }
 
     #live-chat {
-        width: ~"calc(100vw - 40px)";
+        width: 100vw;
         height: 100vh;
+        margin-left: 0;
     }
+
+    .spin-icon,
+    .maximize-icon {
+        position: absolute;
+        left: 6px;
+        z-index: 2200;
+        width: 38px;
+        height: 38px;
+        line-height: 38px;
+        text-align: center;
+        color: white;
+        background: @red;
+        border-radius: 6px;
+        opacity: .5;
+        transition: opacity .2s;
+
+        &:hover { opacity: 1; }
+    }
+
+    .spin-icon { top: 6px; }
+    .maximize-icon { top: 50px; }
 }
 
 @media screen and (max-width: 576px) {

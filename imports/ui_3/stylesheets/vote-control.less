@@ -1,0 +1,211 @@
+/* KK szavazasvezerlo pult - a video-doboz ALATT lebeg, csak a kozos kepviselo latja */
+.vote-control-panel {
+    position: fixed;
+    top: 300px;                 /* a video-doboz: top 90px + 200px magassag + hezag */
+    right: 0;
+    width: 400px;
+    max-width: 94vw;
+    z-index: 3400;              /* a teljes kepernyos video (3000) FOLOTT is latszik */
+    background: #fff;
+    border-radius: 12px 0 0 12px;
+    box-shadow: -4px 8px 28px rgba(23, 43, 77, .28);
+    overflow: hidden;
+    font-size: 15px;
+    line-height: 1.5;
+
+    .vcp-header {
+        background: @nav-bg;
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: .3px;
+        padding: 12px 16px;
+        cursor: pointer;
+        user-select: none;
+        i { margin-right: 8px; }
+        .vcp-caret { float: right; opacity: .7; }
+    }
+
+    .vcp-body { padding: 16px; }
+
+    &.vcp-collapsed .vcp-body { display: none; }
+
+    .vcp-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .8px;
+        color: #8b95a1;
+        font-weight: 700;
+    }
+    .vcp-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: @text-color;
+        margin: 2px 0 12px;
+    }
+
+    .vcp-bar {
+        height: 12px;
+        border-radius: 20px;
+        background: #eef1f5;
+        overflow: hidden;
+        i { display: block; height: 100%; background: @navy; transition: width .4s ease; }
+    }
+    .vcp-stat {
+        margin-top: 8px;
+        color: #6b7783;
+        .vcp-big { font-size: 22px; font-weight: 700; color: @text-color; }
+        .vcp-sep { margin: 0 6px; opacity: .5; }
+        strong { color: @text-color; }
+    }
+
+    .vcp-people {
+        margin-top: 12px;
+        color: @navy;
+        font-weight: 600;
+        cursor: pointer;
+        i { margin-left: 6px; }
+    }
+    .vcp-people-lists {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+        max-height: 220px;
+        overflow-y: auto;
+        .vcp-list { flex: 1; min-width: 0; }
+        .vcp-list-head {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 6px;
+        }
+        .vcp-list-yes .vcp-list-head { color: @navy; }
+        .vcp-list-no .vcp-list-head { color: @yellow; }
+        .vcp-person {
+            font-size: 14px;
+            padding: 3px 0;
+            border-bottom: 1px solid #f1f4f7;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            small { color: #9aa5b1; margin-left: 4px; }
+        }
+    }
+
+    .vcp-btn {
+        margin-top: 16px;
+        font-size: 16px;
+        font-weight: 700;
+        padding: 13px 18px;
+    }
+
+    .vcp-done {
+        color: @navy;
+        font-weight: 600;
+        text-align: center;
+        padding: 10px 0;
+        i { margin-right: 6px; }
+    }
+
+    .vcp-result {
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid #eef1f5;
+        .vcp-result-head {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: #8b95a1;
+            margin-bottom: 8px;
+            i { margin-right: 6px; }
+        }
+        .vcp-result-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            .vcp-result-choice { font-weight: 600; }
+            .vcp-result-value { font-weight: 700; color: @text-color; small { color: #9aa5b1; font-weight: 400; } }
+        }
+    }
+
+    .vcp-foot {
+        margin-top: 14px;
+        font-size: 12px;
+        color: #a7b1bd;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .vote-control-panel {
+        top: auto;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 12px 12px 0 0;
+        .vcp-people-lists { max-height: 160px; }
+    }
+}
+
+/* ---- Automatikus jegyzokonyv a Kozgyulesek oldalon ---- */
+.agenda-minutes {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid #eef1f5;
+
+    .am-head {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        color: #8b95a1;
+        margin-bottom: 12px;
+        i { margin-right: 7px; color: @navy; }
+    }
+
+    .am-entry {
+        background: #fafbfc;
+        border: 1px solid #eef1f5;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+    }
+
+    .am-title { font-size: 17px; font-weight: 700; color: @text-color; }
+    .am-meta {
+        font-size: 14px;
+        color: #78838f;
+        margin: 2px 0 10px;
+        .am-sep { margin: 0 6px; opacity: .5; }
+    }
+
+    .am-table {
+        margin-bottom: 0;
+        background: #fff;
+        border-radius: 8px;
+        > tbody > tr > td { padding: 8px 12px; border-top: 1px solid #f1f4f7; }
+        > tbody > tr:first-child > td { border-top: none; }
+    }
+
+    .am-details {
+        margin-top: 10px;
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: @navy;
+            font-size: 15px;
+            padding: 6px 0;
+            outline: none;
+        }
+        &[open] summary { margin-bottom: 6px; }
+    }
+}
+
+/* A pult fo szama a TULAJDONI HANYAD (a szavazat sulya), a letszam masodlagos */
+.vote-control-panel .vcp-stat {
+    .vcp-unit { color: #6b7783; margin-left: 6px; }
+    .vcp-substat { font-size: 14px; color: #8b95a1; margin-top: 4px; }
+}

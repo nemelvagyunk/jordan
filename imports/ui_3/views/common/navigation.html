@@ -25,7 +25,7 @@
                 </li-->
                 <li class="{{isActivePath regex='board'}}">
                     <a href="{{pathFor 'Board'}}">
-                        <i class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></i>
+                        <i class="fa fa-home" aria-hidden="true"></i>
                         <span class="nav-label">{{_ 'Board'}}</span>
                     </a>
                 </li>
@@ -41,7 +41,7 @@
                 {{#if community.isActiveModule 'forum'}}
                 <li class="{{isActivePath regex='forum'}}">
                     <a href="{{pathFor 'Forum'}}">
-                        <i class="fa fa-commenting" aria-hidden="true"></i>
+                        <i class="fa fa-comments" aria-hidden="true"></i>
                         <span class="nav-label">{{_ 'Forum'}}</span>
                         {{> Badge color='info' title=(_ 'Unread') value=(unseenEventsCount 'forum') align='right'}}
                     </a>
@@ -75,7 +75,7 @@
                 {{/if}}
                 {{#if community.isActiveModule 'maintenance'}}
                 <li class="{{isActivePath regex='tickets|worksheets|contracts'}}">
-                    <a class="js-submenu-toggle" href="#"><i class="glyphicon glyphicon-wrench"></i>
+                    <a class="js-submenu-toggle" href="#"><i class="fa fa-wrench"></i>
                         <span class="nav-label">{{_ 'Maintenance'}}</span>
                         <!--span class="fa arrow"> </span-->
                         {{> Badge color='info' title=(_ 'Unread') value=(unseenEventsCount 'ticket') align='right'}}
@@ -105,7 +105,7 @@
                       konyvelest az eHAZ-ban vegzi, itt nem kell penzugy --}}
                 {{#if false}}
                 <li class="{{isActivePath regex='finances|inventory|accounting'}}">
-                    <a class="js-submenu-toggle" href="#"><i class="glyphicon glyphicon-piggy-bank"></i>
+                    <a class="js-submenu-toggle" href="#"><i class="fa fa-money"></i>
                         <span class="nav-label">{{_ 'Finances'}}</span>
                         <!--span class="fa arrow"> </span-->
                     </a>
@@ -145,7 +145,7 @@
                 {{/if}}
                 <li class="{{isActivePath regex='community/'}} {{isActivePath path='/community'}}">
                     <a href="{{pathFor 'Community page'}}">
-                        <i class="glyphicon glyphicon-home" aria-hidden="true"></i>
+                        <i class="fa fa-users" aria-hidden="true"></i>
                         <span class="nav-label text-capitalize">{{_ (concat community.displayType ' page')}}</span>
                         {{#if currentUserHasPermission 'parcels.update'}}
                         {{> Badge color='danger' title=(_ 'Todo') value=countUnapprovedEntities align='right'}}
@@ -173,7 +173,7 @@
                 {{#if community.isActiveModule 'documents'}}
                 <li class="{{isActivePath regex='documents'}}">
                     <a href="{{pathFor 'Documentstore'}}">
-                        <i class="glyphicon glyphicon-paperclip" aria-hidden="true"></i>
+                        <i class="fa fa-folder-open" aria-hidden="true"></i>
                         <span class="nav-label">{{_ 'Documentstore'}}</span>
                     </a>
                 </li>
@@ -188,10 +188,10 @@
             {{/if}}
 
             <!-- link to home page -->
-            <ul style="position: absolute; bottom: 0; left: 10px; width: 90%; background-color: white; border-radius: 5px;">
+            <ul class="sidebar-logo-plate" style="position: absolute; bottom: 14px; left: 0; width: 100%;">
                 <div class="logo-container">
                     <a href="{{pathFor 'App intro'}}" id="logo" class="minimalize-styl-2">
-                        <img src="/images/brand/logo.png" width="100" alt="SMART Társasházkezelés">
+                        <img src="/images/brand/logo-dark-bg.png" width="185" alt="eszavazas.hu">
                     </a>
                 </div>
             </ul>

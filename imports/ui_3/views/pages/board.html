@@ -7,22 +7,25 @@
             + faliujsag; forum-folyam es egyenleg-widget eltavolitva --}}
       <div class="col-xs-12 col-lg-8 col-lg-offset-2">
         {{#with nextAgenda}}
-        <div class="ibox">
+        <div class="ibox next-assembly">
+        <div class="ibox-title">
+            <h3><i class="fa fa-legal"></i>{{#if isUpcomingAgenda this}}{{_ 'Next assembly'}}{{else}}{{_ 'Previous assembly'}}{{/if}}</h3>
+        </div>
         <div class="ibox-content">
-            <h2 class="m-b-xs"><i class="fa fa-legal"></i>
-                {{#if isUpcomingAgenda this}}{{_ 'Next assembly'}}{{else}}{{_ 'Previous assembly'}}{{/if}}</h2>
             {{#if this.scheduledAt}}
-            <h3 class="text-navy m-t-xs">{{displayTime this.scheduledAt}}</h3>
+            <div class="assembly-date">{{displayTime this.scheduledAt}}</div>
             {{/if}}
-            {{#if this.title}}<h4>{{this.title}}</h4>{{/if}}
+            {{#if this.title}}<div class="assembly-title">{{this.title}}</div>{{/if}}
             {{#with agendaTopics this}}
             {{#if this.length}}
-            <strong>{{_ 'Agenda points'}}:</strong>
-            <ol class="m-t-xs">
-                {{#each t in this}}
-                <li>{{t.title}} {{> Attachments doc=t}}</li>
-                {{/each}}
-            </ol>
+            <div class="assembly-agenda">
+                <strong>{{_ 'Agenda points'}}</strong>
+                <ol>
+                    {{#each t in this}}
+                    <li>{{t.title}} {{> Attachments doc=t}}</li>
+                    {{/each}}
+                </ol>
+            </div>
             {{/if}}
             {{/with}}
         </div>

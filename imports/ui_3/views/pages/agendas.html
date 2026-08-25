@@ -32,6 +32,66 @@
             <div class="ibox-content">
                 {{>Action_buttons_group collection='agendas' doc=this actions='edit,delete,participationSheet,videoCall,videoJoin' size='lg'}}
                 {{>Voting_list items=topics}}
+
+                {{!-- SMART atalakitas (2026-08-25): AUTOMATIKUS JEGYZOKONYV --
+                     minden lezart szavazas eredmenye + jelenleti ive --}}
+                {{#if hasMinutes}}
+                <div class="agenda-minutes">
+                    <div class="am-head"><i class="fa fa-book"></i> {{_ 'Minutes'}}</div>
+                    {{#each entry in minutesEntries}}
+                    <div class="am-entry">
+                        <div class="am-title">{{entry.serial}}. {{entry.title}}</div>
+                        <div class="am-meta">
+                            {{_ 'Closed at'}}: {{displayTime entry.closedAt}}
+                            <span class="am-sep">·</span>
+                            {{_ 'Participation'}}: <strong>{{entry.participation.percent}}%</strong> {{_ 'ownership share'}}
+                            ({{entry.participation.units}} / {{entry.eligible.units}} {{_ 'ownership units'}}
+                            <span class="am-sep">·</span> {{_ 'headcount'}}: {{entry.participation.count}} / {{entry.eligible.count}})
+                        </div>
+                        <table class="table am-table">
+                            <thead><tr>
+                                <th></th>
+                                <th class="text-right">{{_ 'of votes cast'}}</th>
+                                <th class="text-right">{{_ 'of total ownership'}}</th>
+                                <th class="text-right">{{_ 'ownership units'}}</th>
+                            </tr></thead>
+                            <tbody>
+                            {{#each r in entry.results}}
+                            <tr>
+                                <td>{{_ r.choice}}</td>
+                                <td class="text-right"><strong>{{r.percentOfVotes}}%</strong></td>
+                                <td class="text-right">{{r.percentOfTotal}}%</td>
+                                <td class="text-right"><small>{{r.votingUnits}}</small></td>
+                            </tr>
+                            {{/each}}
+                            </tbody>
+                        </table>
+                        <details class="am-details">
+                            <summary>{{_ 'Attendance sheet'}} ({{entry.attendance.length}})</summary>
+                            <table class="table am-table">
+                                <tbody>
+                                {{#each a in entry.attendance}}
+                                <tr>
+                                    <td>{{a.name}}{{#if a.viaName}}
+                                        <small class="text-muted"> ({{_ 'by proxy'}}: {{a.viaName}})</small>{{/if}}</td>
+                                    <td class="text-right"><small>{{a.votingUnits}}</small></td>
+                                    <td class="text-right">
+                                        {{#if a.voted}}
+                                            {{#if (equals a.choice 'yes')}}<span class="label label-primary">{{_ 'yes'}}</span>
+                                            {{else if (equals a.choice 'no')}}<span class="label label-danger">{{_ 'no'}}</span>
+                                            {{else if (equals a.choice 'abstain')}}<span class="label label-warning">{{_ 'abstain'}}</span>
+                                            {{else}}<span class="label label-info">{{_ a.choice}}</span>{{/if}}
+                                        {{else}}<span class="label label-default">{{_ 'did not vote'}}</span>{{/if}}
+                                    </td>
+                                </tr>
+                                {{/each}}
+                                </tbody>
+                            </table>
+                        </details>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
             </div>
         </div>
         {{/each}}

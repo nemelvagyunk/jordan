@@ -31,6 +31,11 @@ Agendas.schema = new SimpleSchema({
   // SMART atalakitas: a kozgyules kiirt idopontja (nap + ora) - a Fooldal
   // tetejen ebbol jelenik meg a kovetkezo kozgyules
   scheduledAt: { type: Date, optional: true, autoform: { type: 'datetime-local' } },
+  // SMART atalakitas (2026-08-25): AUTOMATIKUS JEGYZOKONYV - minden lezart
+  // szavazasrol ide kerul egy bejegyzes (eredmeny + jelenleti iv), lasd
+  // Votings.recordInMinutes(). Csak a szerver irja, kezzel nem szerkesztheto.
+  minutes: { type: Array, optional: true, autoform: { omit: true } },
+  'minutes.$': { type: Object, blackbox: true, autoform: { omit: true } },
 //  topicIds: { type: Array, defaultValue: [] },
 //  'topicIds.$': { type: String, regEx: SimpleSchema.RegEx.Id, autoform: chooseTopic },
 });
@@ -55,6 +60,13 @@ Agendas.helpers({
   },
   participationSheet() {
     return Votings.participationSheet(this.community(), this);
+  },
+  // A jegyzokonyv bejegyzesei sorszam szerint (lezart szavazasok)
+  minutesEntries() {
+    return (this.minutes || []).slice().sort((a, b) => (a.serial || 0) - (b.serial || 0));
+  },
+  hasMinutes() {
+    return !!(this.minutes && this.minutes.length);
   },
 });
 

@@ -16,11 +16,17 @@
             </div>
             <!-- End Page wrapper-->
             
+            {{!-- SMART atalakitas (2026-08-25): a jobb also sarokban lebego zold
+                 kerdojeles technikai-tamogatas buborek (Tech_chat) eltavolitva
+                 (Attila kerese). Visszaallitas: a lenti blokk kikommentelese
+                 megszuntetheto. --}}
+            {{!--
             <div>
                 {{#unless currentUserHasPermission 'do.techsupport'}}
                 {{> Tech_chat}}
                 {{/unless}}
             </div>
+            --}}
 
             <!-- Right Sidebar -->
             <div>
@@ -35,5 +41,7 @@
     {{> Promotion}}
     {{> Live_Chat}}
     {{> Live_Vote}}
+    {{!-- SMART: KK szavazasvezerlo pult a video alatt (csak a kozos kepviselo latja) --}}
+    {{> Vote_control}}
 
 </template>

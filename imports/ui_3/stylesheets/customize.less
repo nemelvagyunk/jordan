@@ -364,21 +364,376 @@
     height: 100vh;
 } */
 
-// SMART atalakitas: nagyobb alap-betumeret az EGESZ oldalon (Attila kerese)
-// A tema alapja 13px volt -> 15px; a nagy tobbseg orokli, igy aranyosan no.
+// =====================================================================
+// eszavazas.hu — "B · Modern kartyas" design (2026-08-25)
+// Cel: nagyobb, olvashato betuk + mai, kartyas megjelenes.
+// A tema alap 13px volt -> @app-fs. Egy helyen hangolhato lentebb.
+// A szinek/kerekitesek egy resze a ui_3/stylesheets/variables.less-ben
+// van felulirva (@gray, @border-color, @btn-border-radius, @nav-bg, @navy).
+// =====================================================================
+
+@app-fs:        17px;   // alap betumeret az egesz oldalon
+@app-fs-ui:     16px;   // gombok, menu, urlapmezok
+@app-radius:    12px;   // kartya-kerekites
+@app-line:      #eef1f5;// halvany elvalaszto vonal
+@app-shadow:    0 1px 3px rgba(23, 43, 77, .08), 0 6px 20px rgba(23, 43, 77, .05);
+
+// ---------------------------------------------------------------- 1. Tipografia
 body {
-    font-size: 15px;
+    font-family: "Inter", "Segoe UI", "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: @app-fs;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
-// A menu, tablazatok, gombok, urlapok, buborekok is kovessek
-.nav-label,
-.nav > li > a,
-table.table,
-.ibox-content,
-.form-control,
-.btn,
-p, li, td, th, label {
-    font-size: 15px;
+
+p, li, dt, dd, label,
+.ibox-content, .ibox-footer,
+.feed-element, .social-body, .well, .panel-body,
+.chat-message .message-content {
+    font-size: @app-fs;
 }
-.navbar-top-links li a {
-    font-size: 15px;
+
+.form-control, .btn, .dropdown-menu > li > a,
+.nav > li > a, .navbar-top-links li a, .nav-label {
+    font-size: @app-fs-ui;
+}
+
+h1 { font-size: 30px; }
+h2 { font-size: 26px; }
+h3 { font-size: 22px; }
+h4 { font-size: 19px; }
+h5 { font-size: 17px; }
+
+.page-heading {
+    background: transparent;
+    border-bottom: none;
+    padding: 22px 10px 4px 10px;
+    h2 { font-size: 27px; font-weight: 700; letter-spacing: -.2px; }
+}
+
+.ibox-title {
+    h1, h2, h3, h4, h5 { font-size: 19px; font-weight: 700; letter-spacing: -.1px; }
+}
+
+// ---------------------------------------------------------------- 2. Kartyak (ibox)
+.ibox {
+    background-color: #fff;
+    border-radius: @app-radius;
+    box-shadow: @app-shadow;
+    margin-bottom: 24px;
+}
+.ibox-title {
+    border-width: 0 0 1px 0;
+    border-color: @app-line;
+    background-color: #fff;
+    padding: 17px 22px 13px 22px;
+    min-height: 52px;
+}
+.ibox-content {
+    border-width: 0;
+    background-color: #fff;
+    padding: 20px 22px 22px 22px;
+}
+.ibox-footer {
+    border-top: 1px solid @app-line;
+    font-size: @app-fs-ui;
+    padding: 14px 22px;
+}
+// Sarkok lekerekitese (overflow:hidden NEM johet, mert levagna a lenyilo menuket)
+.ibox > .ibox-title:first-child,
+.ibox > .ibox-content:first-child {
+    border-top-left-radius: @app-radius;
+    border-top-right-radius: @app-radius;
+}
+.ibox > .ibox-content:last-child,
+.ibox > .ibox-footer:last-child {
+    border-bottom-left-radius: @app-radius;
+    border-bottom-right-radius: @app-radius;
+}
+
+// Fooldali faliujsag / bejegyzes-dobozok is kartyak legyenek
+#board > .social-feed-box,
+.social-feed-box {
+    border: none;
+    background-color: #fff;
+    border-radius: @app-radius;
+    box-shadow: @app-shadow;
+    margin-bottom: 24px;
+}
+
+.modal-content { border-radius: @app-radius; border: none; box-shadow: 0 12px 40px rgba(23,43,77,.25); }
+.modal-header  { padding: 18px 22px; border-bottom: 1px solid @app-line; }
+.modal-body    { padding: 22px; }
+.modal-footer  { padding: 16px 22px; border-top: 1px solid @app-line; }
+.panel { border-radius: @app-radius; }
+.well  { border-radius: @app-radius; border-color: @app-line; }
+
+// ---------------------------------------------------------------- 3. Bal menu
+#side-menu > li > a {
+    padding: 12px 18px;
+    font-weight: 500;
+    border-radius: 8px;
+    margin: 2px 10px;
+}
+#side-menu > li.active {
+    border-left: none;
+    background: transparent;
+}
+#side-menu > li.active > a {
+    background-color: @navy;
+    color: #fff;
+    box-shadow: 0 4px 12px fade(@navy, 35%);
+}
+.navbar-default #side-menu > li > a:hover,
+.navbar-default #side-menu > li > a:focus {
+    background-color: lighten(@nav-bg, 7%);
+    color: #fff;
+}
+.navbar-default #side-menu > li.active > a:hover {
+    background-color: darken(@navy, 5%);
+}
+.nav-second-level li a { font-size: @app-fs-ui - 1; padding-top: 9px; padding-bottom: 9px; }
+.navbar { min-height: 66px; }
+.navbar-top-links li a { font-weight: 500; }
+
+// ---------------------------------------------------------------- 4. Gombok
+.btn {
+    padding: 10px 20px;
+    font-weight: 600;
+    border-radius: @btn-border-radius;
+    line-height: 1.4;
+}
+.btn-lg { padding: 14px 26px; font-size: 19px; }
+.btn-sm { padding: 8px 14px;  font-size: 15px; }
+.btn-xs { padding: 4px 10px;  font-size: 13px; }
+.btn-circle { padding: 0; }
+.btn + .btn { margin-left: 2px; }
+
+// ---------------------------------------------------------------- 5. Urlapok
+.form-control {
+    height: auto;
+    min-height: 44px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #dde3ea;
+    box-shadow: none;
+}
+.form-control:focus {
+    border-color: @navy;
+    box-shadow: 0 0 0 3px fade(@navy, 20%);
+}
+textarea.form-control { min-height: 90px; }
+.input-sm, select.input-sm { min-height: 36px; padding: 6px 10px; font-size: 15px; }
+.input-group-addon { border-radius: 8px; border-color: #dde3ea; font-size: @app-fs-ui; }
+.control-label, label.control-label { font-weight: 600; }
+
+// ---------------------------------------------------------------- 6. Tablazatok
+.table > thead > tr > th {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: #8b95a1;
+    background-color: #fafbfc;
+    border-bottom: 1px solid @app-line;
+    padding: 13px 12px;
+    vertical-align: middle;
+}
+.table > tbody > tr > td {
+    font-size: @app-fs;
+    padding: 13px 12px;
+    border-top: 1px solid #f1f4f7;
+    vertical-align: middle;
+}
+.table-hover > tbody > tr:hover { background-color: #f7fbfd; }
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select { min-height: 38px; font-size: 15px; }
+
+// ---------------------------------------------------------------- 7. Apro finomitasok
+.label, .badge { font-size: 12px; letter-spacing: .3px; padding: 4px 9px; border-radius: 20px; }
+a { transition: color .12s ease; }
+.text-muted { color: #78838f; }
+hr { border-color: @app-line; }
+
+// ---------------------------------------------------------------- 8. Szekcio-fejlec (Collapse_section)
+// A regi sotetkek, nagybetus sav helyett vilagos kartyafejlec, hogy illeszkedjen
+// a tobbi dobozhoz (pl. FALIUJSAG a Fooldalon).
+.collapse-container { margin-bottom: 24px; }
+.section-btn {
+    background-color: #fff;
+    color: @text-color;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 700;
+    font-size: 19px;
+    padding: 16px 22px;
+    border-radius: @app-radius @app-radius 0 0;
+    border-bottom: 1px solid @app-line;
+    box-shadow: 0 1px 3px rgba(23, 43, 77, .08);
+    .glyphicon-list { color: @navy; margin-right: 9px; font-size: 16px; }
+    small {
+        height: auto;
+        margin: 0;
+        padding: 0;
+        color: #9aa5b1;
+        background: none;
+    }
+    &.collapsed {
+        background-color: #fff;
+        border-radius: @app-radius;
+        border-bottom: none;
+        box-shadow: @app-shadow;
+        small { background: none; }
+    }
+    &-notfirst { margin-top: 24px; }
+}
+// A fejlec alatti doboz zarja le a kartyat (felul szogletes, alul lekerekitett)
+.collapse-container .ibox {
+    margin-bottom: 0;
+    border-radius: 0 0 @app-radius @app-radius;
+    box-shadow: 0 6px 20px rgba(23, 43, 77, .05);
+}
+.collapse-container .ibox > .ibox-content:first-child {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+// ---------------------------------------------------------------- 9. Fooldal: kozgyules-doboz
+.next-assembly {
+    .ibox-title .fa { color: @navy; margin-right: 9px; }
+    .assembly-date {
+        font-size: 26px;
+        font-weight: 700;
+        color: @navy;
+        line-height: 1.25;
+        margin-bottom: 2px;
+    }
+    .assembly-sub { color: #8b95a1; font-size: 15px; margin-bottom: 16px; }
+    .assembly-title { font-size: 19px; font-weight: 600; margin: 14px 0 4px; }
+    .assembly-agenda {
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid @app-line;
+        > strong { display: block; margin-bottom: 8px; color: #8b95a1;
+                   font-size: 13px; text-transform: uppercase; letter-spacing: .6px; }
+        ol { margin: 0; padding-left: 1.4em; }
+        ol li { margin-bottom: 9px; }
+    }
+}
+
+// ---------------------------------------------------------------- 10. Bejelentkezo oldal
+.loginscreen {
+    background: #fff;
+    border-radius: @app-radius;
+    box-shadow: @app-shadow;
+    padding: 34px 30px 26px;
+    max-width: 420px;
+    margin: 40px auto;
+    .logo img { width: 240px; max-width: 100%; }
+    .at-title { font-size: 21px; font-weight: 700; margin-top: 18px; }
+    .btn { width: 100%; }
+}
+
+// ---------------------------------------------------------------- 11. Mobil finomitas
+@media (max-width: 767px) {
+    body { font-size: 16px; }
+    p, li, dt, dd, label, .ibox-content, .feed-element, .social-body, .well { font-size: 16px; }
+    .page-heading { padding: 16px 6px 2px; }
+    .page-heading h2 { font-size: 23px; }
+    .ibox { border-radius: 10px; margin-bottom: 18px; }
+    .ibox-title { padding: 14px 16px 10px; h1, h2, h3, h4, h5 { font-size: 17px; } }
+    .ibox-content { padding: 16px; }
+    .section-btn { padding: 14px 16px; font-size: 17px; }
+    .table > thead > tr > th, .table > tbody > tr > td { padding: 10px 8px; font-size: 15px; }
+    .btn { padding: 9px 15px; font-size: 15px; }
+    .form-control { min-height: 42px; font-size: 16px; }   // 16px alatt az iOS ranagyit
+    .next-assembly .assembly-date { font-size: 21px; }
+    .loginscreen { margin: 16px auto; padding: 24px 20px 18px; }
+}
+
+// ---------------------------------------------------------------- 12. Apro korrekciok
+// A szekcio-fejlec ne logjon ki a kartya szelessegebol
+.section-btn { box-sizing: border-box; }
+// A dobozfejlec ne legyen feleslegesen magas (a cimek lebegnek benne)
+.ibox-title {
+    &:after { content: ""; display: table; clear: both; }
+    h1, h2, h3, h4, h5 { margin-bottom: 0; }
+}
+.next-assembly .ibox-content { padding-top: 18px; }
+
+// ---------------------------------------------------------------- 13. Logo a bal menu aljan
+// A regi feher lap (inline background-color:white) KIKERULT - a logo kozvetlenul
+// a sotet menusavon ul, az arra keszult vilagos valtozattal (logo-dark-bg.png).
+.sidebar-logo-plate {
+    background: none;
+    text-align: center;
+    padding: 0;
+    #logo { display: inline-block; padding: 0; }
+    img { max-width: 90%; height: auto; }
+}
+
+// ---------------------------------------------------------------- 14. Ahol meg kicsi maradt a betu
+small, .small { font-size: 90%; }                       // 12-13px helyett ~15px
+.label, .badge { font-size: 13px; padding: 5px 10px; }
+.navbar-top-links .label, .nav .label { font-size: 12px; padding: 3px 7px; }
+.table > thead > tr > th { font-size: 14px; }
+.nav-tabs > li > a { font-size: 16px; font-weight: 600; padding: 12px 20px; border-radius: 8px 8px 0 0; }
+.tabs-container .panel-body { padding: 18px 20px; }
+.dropdown-menu > li > a { padding: 9px 16px; }
+.text-muted.small, .text-muted { font-size: inherit; }
+.help-block, .form-text { font-size: 15px; }
+.footer { font-size: 15px; }
+.chat-message .message-author, .message-date { font-size: 15px; }
+.ibox-title .label { font-size: 13px; }
+td small, .feed-element small, .news-elem small { font-size: 15px; }
+
+// ---------------------------------------------------------------- 15. Faliujsag-bejegyzesek
+.feed-element .news-elem { overflow: hidden; }
+.feed-element .news-elem > strong { font-size: 18px; display: block; margin-bottom: 4px; }
+.feed-element .news-elem > .pull-right.m-t-sm {
+    float: none !important;
+    display: block;
+    text-align: right;
+    margin-top: 12px;
+}
+.feed-activity-list .feed-element + .feed-element {
+    border-top: 1px solid @app-line;
+    margin-top: 18px;
+    padding-top: 18px;
+}
+
+// ---------------------------------------------------------------- 16. Cimsorok sulya
+// Az INSPINIA h1-h3 alapbol font-weight:100 (nagyon vekony) - a kartyas
+// designhoz hatarozottabb cimek illenek.
+h1, h2, h3 { font-weight: 600; color: @text-color; letter-spacing: -.3px; }
+h1 { font-weight: 700; }
+h4, h5, h6 { font-weight: 600; color: @text-color; }
+.ibox-heading h3 { font-weight: 600; }
+.no-margins { margin: 0; }
+
+// ---------------------------------------------------------------- 17. Mobil: tablazat + fejlecek
+@media (max-width: 767px) {
+    // A szeles tablazatok vizszintesen gorgethetok legyenek, ne logjanak ki a kartyabol
+    .tabs-container .panel-body,
+    .dataTables_wrapper,
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .tabs-container .panel-body > .table,
+    .dataTables_wrapper .table { min-width: 560px; }
+
+    // A jobbra lebegtetett apro feliratok ne csusszanak ra a cimre
+    .text-muted.small.pull-right { float: none !important; display: block; text-align: left; margin-bottom: 6px; }
+    .parcels > .btn-group.pull-right,
+    .memberships > .btn-group.pull-right { float: none !important; display: block; margin-bottom: 10px; }
+
+    // Gombcsoportok torjenek sorba, ne nyuljanak ki
+    .btn-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .btn-group > .btn { border-radius: @btn-border-radius !important; }
+
+    // Fulek egymas alatt, de kartyaszeruen
+    .nav-tabs > li { float: none; width: 100%; }
+    .nav-tabs > li > a { border-radius: 8px; margin-bottom: 4px; }
 }

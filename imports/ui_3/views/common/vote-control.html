@@ -1,0 +1,80 @@
+<template name="Vote_control">
+{{#if showPanel}}
+<div class="vote-control-panel {{#if collapsed}}vcp-collapsed{{/if}}">
+
+    <div class="vcp-header js-toggle">
+        <i class="fa fa-sliders"></i> {{_ 'Vote control'}}
+        <span class="vcp-caret"><i class="fa fa-chevron-{{#if collapsed}}up{{else}}down{{/if}}"></i></span>
+    </div>
+
+    <div class="vcp-body">
+        {{#if openVote}}
+            {{#with openVote}}
+            <div class="vcp-label">{{_ 'Current voting'}}</div>
+            <div class="vcp-title">{{serialAndTitle this}}</div>
+            {{/with}}
+
+            {{!-- A szavazat SULYA a tulajdoni hanyad - ezert ez a fo szam --}}
+            <div class="vcp-bar"><i style="width: {{votedUnitsPercent}}%"></i></div>
+            <div class="vcp-stat">
+                <span class="vcp-big">{{votedUnitsPercent}}%</span>
+                <span class="vcp-unit">{{_ 'of ownership share has voted'}}</span>
+                <div class="vcp-substat">
+                    {{_ 'headcount'}}: {{votedCount}} / {{totalVoters}}
+                    <span class="vcp-sep">·</span>
+                    {{_ 'ownership units'}}: {{votedUnits}} / {{totalUnits}}
+                </div>
+            </div>
+
+            <div class="vcp-people js-people-toggle">
+                {{#if showPeople}}{{_ 'Hide voters'}}{{else}}{{_ 'Who voted'}}{{/if}}
+                <i class="fa fa-caret-{{#if showPeople}}up{{else}}down{{/if}}"></i>
+            </div>
+            {{#if showPeople}}
+            <div class="vcp-people-lists">
+                <div class="vcp-list vcp-list-yes">
+                    <div class="vcp-list-head"><i class="fa fa-check"></i> {{_ 'voted'}} ({{votedVoters.length}})</div>
+                    {{#each v in votedVoters}}<div class="vcp-person">{{v.name}} <small>{{v.units}}</small></div>{{/each}}
+                </div>
+                <div class="vcp-list vcp-list-no">
+                    <div class="vcp-list-head"><i class="fa fa-clock-o"></i> {{_ 'not voted yet'}} ({{missingVoters.length}})</div>
+                    {{#each v in missingVoters}}<div class="vcp-person">{{v.name}} <small>{{v.units}}</small></div>{{/each}}
+                </div>
+            </div>
+            {{/if}}
+
+            <button class="btn btn-danger btn-block vcp-btn js-close-vote">
+                <i class="fa fa-gavel"></i> {{_ 'Close current voting'}}
+            </button>
+
+        {{else}}
+
+            {{#if nextVote}}
+                <div class="vcp-label">{{_ 'Next voting'}}</div>
+                <div class="vcp-title">{{serialAndTitle nextVote}}</div>
+                <button class="btn btn-primary btn-block vcp-btn js-open-vote">
+                    <i class="fa fa-play"></i> {{_ 'Open next voting'}}
+                </button>
+            {{else}}
+                <div class="vcp-done"><i class="fa fa-check-circle"></i> {{_ 'All votings are closed'}}</div>
+            {{/if}}
+
+        {{/if}}
+
+        {{#with lastClosedVote}}
+        <div class="vcp-result">
+            <div class="vcp-result-head"><i class="fa fa-bar-chart"></i> {{_ 'Result'}} — {{serialAndTitle this}}</div>
+            {{#each line in voteSummaryDisplay}}
+            <div class="vcp-result-line">
+                <span class="vcp-result-choice">{{_ line.choice}}</span>
+                <span class="vcp-result-value">{{line.percentOfVotes}}% <small>({{line.votingUnits}})</small></span>
+            </div>
+            {{/each}}
+        </div>
+        {{/with}}
+
+        <div class="vcp-foot">{{_ 'Only the manager sees this panel'}}</div>
+    </div>
+</div>
+{{/if}}
+</template>

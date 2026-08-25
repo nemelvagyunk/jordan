@@ -48,6 +48,12 @@ export function joinLiveChat(user, doc) {
       // A KK a resztvevo-listabol kerheti a lako mikrofonjanak bekapcsolasat
       // (kezfeltevesnel), es barkit vissza is nemithat.
       startAudioMuted: 1,
+      // SMART (2026-08-25): eleg legyen a MIKROFON engedelyezese - a Jitsi
+      // alapbol kamera+mikrofon hozzaferest ker. Az audio-only inditassal
+      // a bongeszo csak a mikrofonra kerdez ra; aki kepet is akar, kesobb
+      // bekapcsolhatja a kamerat (akkor kerdez ra a bongeszo).
+      startAudioOnly: true,
+      startWithVideoMuted: true,
       disableDeepLinking: true, // telefonon ne az appboltba kuldje a lakot, maradjon a bongeszoben
       // A fontos gombok keruljenek elore - igy a kezfelteves lakoi fiokbol,
       // telefonon is elerheto (ami kifer, latszik, a tobbi a ... menube kerul)
